@@ -1,3 +1,9 @@
+# 🤖 Discord Ops Copilot
+
+> **This project has been customized as a Discord Ops Copilot** — A professional AI assistant for Discord community setup, server architecture, role management, automation workflows, onboarding flows, event scheduling, and moderation policy design.
+
+---
+
 # 🚀 Enterprise AI Development
 
 > **Learn professional software development by building a real AI application**
@@ -173,9 +179,9 @@ class SearchOptions:
 class SearchOptions:
     """
     📚 CONCEPT: Dataclasses auto-generate __init__, __repr__, __eq__
-    
+
     📝 DESIGN: We default to "gpt-4o-mini" (fastest, cheapest for learning)
-    
+
     EXAMPLE:
     >>> options = SearchOptions()  # Uses defaults
     >>> options = SearchOptions(model="gpt-4o")  # Override for production
@@ -231,13 +237,13 @@ git status && git log --oneline                    # Git status
 
 After completing this course, you will confidently:
 
-✅ Build robust API clients with error handling  
-✅ Write comprehensive tests using TDD methodology  
-✅ Structure applications with clean architecture  
-✅ Implement enterprise-grade logging and monitoring  
-✅ Use professional git workflows and CI/CD  
-✅ Collaborate effectively with AI tools  
-✅ Present technical work clearly  
+✅ Build robust API clients with error handling
+✅ Write comprehensive tests using TDD methodology
+✅ Structure applications with clean architecture
+✅ Implement enterprise-grade logging and monitoring
+✅ Use professional git workflows and CI/CD
+✅ Collaborate effectively with AI tools
+✅ Present technical work clearly
 
 **Most importantly:** You'll shift from writing "scripts that work" to building "systems that last."
 
