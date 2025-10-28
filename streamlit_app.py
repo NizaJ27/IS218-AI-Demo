@@ -1,8 +1,8 @@
 """
-Discord Ops Copilot - Streamlit Chat Interface
+Overconfident Toaster - Streamlit Chat Interface
 
-A professional Discord community setup and workflow assistant that helps design
-server layouts, roles, automation, onboarding flows, event schedules, and moderation policies.
+A supremely confident AI life coach that gives advice as if everything is bread.
+Maps all problems to toast settings and speaks in bread metaphors.
 """
 
 import os
@@ -27,13 +27,13 @@ MODELS = [
 
 # Page configuration
 st.set_page_config(
-    page_title="Discord Ops Copilot",
-    page_icon="🤖",
+    page_title="Overconfident Toaster",
+    page_icon="🍞",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for Discord-inspired theme with professional layout
+# Custom CSS for Toaster-inspired theme with warm, bread colors
 st.markdown("""
 <style>
     /* Hide default sidebar toggle and make app full width */
@@ -41,29 +41,29 @@ st.markdown("""
         display: none;
     }
 
-    /* Main background - Discord dark grey */
+    /* Main background - Toasted bread brown */
     .stApp {
-        background-color: #36393f;
+        background-color: #2d2416;
     }
 
     /* Remove default padding for full-width design */
     .main .block-container {
         max-width: 100%;
         padding: 0;
-        background-color: #36393f;
+        background-color: #2d2416;
     }
 
-    /* Custom header bar */
+    /* Custom header bar - Crispy golden crust gradient */
     .header-bar {
-        background: linear-gradient(90deg, #5865f2 0%, #4752c4 100%);
+        background: linear-gradient(90deg, #d4a574 0%, #c89350 100%);
         padding: 1rem 2rem;
         border-radius: 0;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
         margin-bottom: 0;
     }
 
     .header-title {
-        color: white;
+        color: #1a0f00;
         font-size: 1.75rem;
         font-weight: 700;
         margin: 0;
@@ -73,7 +73,7 @@ st.markdown("""
     }
 
     .header-subtitle {
-        color: rgba(255, 255, 255, 0.8);
+        color: rgba(26, 15, 0, 0.8);
         font-size: 0.875rem;
         margin: 0.25rem 0 0 0;
     }
@@ -86,24 +86,24 @@ st.markdown("""
         min-height: calc(100vh - 250px);
     }
 
-    /* Headers - Discord blurple */
+    /* Headers - Butter yellow */
     h1, h2, h3 {
-        color: #5865f2 !important;
+        color: #f4d03f !important;
         font-weight: 700 !important;
     }
 
-    /* Subheaders and captions */
+    /* Subheaders and captions - Light wheat */
     .stCaption, p {
-        color: #b9bbbe !important;
+        color: #d4b896 !important;
     }
 
     /* Text inputs and text areas - rounded */
     .stTextInput > div > div > input,
     .stTextArea > div > div > textarea {
-        background-color: #40444b !important;
-        color: #dcddde !important;
+        background-color: #3d3020 !important;
+        color: #f5e6d3 !important;
         border-radius: 8px !important;
-        border: 1px solid #202225 !important;
+        border: 1px solid #5a4a35 !important;
         font-size: 0.95rem !important;
     }
 
@@ -113,19 +113,19 @@ st.markdown("""
 
     /* Selectbox - rounded */
     .stSelectbox > div > div {
-        background-color: #40444b !important;
+        background-color: #3d3020 !important;
         border-radius: 8px !important;
-        border: 1px solid #202225 !important;
+        border: 1px solid #5a4a35 !important;
     }
 
     .stSelectbox > div > div > div {
-        color: #dcddde !important;
+        color: #f5e6d3 !important;
     }
 
-    /* Buttons - Discord blurple with rounded corners */
+    /* Buttons - Toasted orange with rounded corners */
     .stButton > button {
-        background-color: #5865f2 !important;
-        color: white !important;
+        background-color: #d4a574 !important;
+        color: #1a0f00 !important;
         border-radius: 8px !important;
         border: none !important;
         font-weight: 600 !important;
@@ -135,18 +135,18 @@ st.markdown("""
     }
 
     .stButton > button:hover {
-        background-color: #4752c4 !important;
+        background-color: #c89350 !important;
         transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(88, 101, 242, 0.5) !important;
+        box-shadow: 0 6px 16px rgba(212, 165, 116, 0.6) !important;
     }
 
     /* Chat messages - rounded and polished */
     .stChatMessage {
-        background-color: #40444b !important;
+        background-color: #3d3020 !important;
         border-radius: 16px !important;
         padding: 1.25rem !important;
         margin-bottom: 1rem !important;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
     }
 
     /* User messages - slightly different color */
@@ -157,22 +157,22 @@ st.markdown("""
     /* Chat input - rounded and integrated */
     .stChatInputContainer {
         padding: 1.5rem 2rem !important;
-        background-color: #2f3136 !important;
-        border-top: 2px solid #202225 !important;
+        background-color: #1f1810 !important;
+        border-top: 2px solid #5a4a35 !important;
     }
 
     .stChatInputContainer > div {
-        background-color: #40444b !important;
+        background-color: #3d3020 !important;
         border-radius: 24px !important;
-        border: 2px solid #202225 !important;
+        border: 2px solid #5a4a35 !important;
         max-width: 1200px !important;
         margin: 0 auto !important;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
     }
 
     .stChatInput > div > div > input {
         background-color: transparent !important;
-        color: #dcddde !important;
+        color: #f5e6d3 !important;
         border-radius: 24px !important;
         font-size: 1rem !important;
         padding: 1rem 1.5rem !important;
@@ -180,50 +180,50 @@ st.markdown("""
 
     /* Expander for settings */
     .streamlit-expanderHeader {
-        background-color: #40444b !important;
+        background-color: #3d3020 !important;
         border-radius: 8px !important;
-        color: #dcddde !important;
+        color: #f5e6d3 !important;
         font-weight: 600 !important;
         padding: 1rem !important;
-        border: 1px solid #202225 !important;
+        border: 1px solid #5a4a35 !important;
     }
 
     .streamlit-expanderHeader:hover {
-        background-color: #4f545c !important;
+        background-color: #4a3b28 !important;
     }
 
     .streamlit-expanderContent {
-        background-color: #2f3136 !important;
+        background-color: #1f1810 !important;
         border-radius: 0 0 8px 8px !important;
-        border: 1px solid #202225 !important;
+        border: 1px solid #5a4a35 !important;
         border-top: none !important;
         padding: 1.5rem !important;
     }
 
     /* Divider */
     hr {
-        border-color: #4f545c !important;
+        border-color: #5a4a35 !important;
         margin: 1rem 0 !important;
     }
 
     /* Success/Info messages */
     .stSuccess {
-        background-color: #3ba55d !important;
-        color: white !important;
+        background-color: #c89350 !important;
+        color: #1a0f00 !important;
         border-radius: 8px !important;
         padding: 1rem !important;
     }
 
     .stInfo {
-        background-color: #5865f2 !important;
-        color: white !important;
+        background-color: #d4a574 !important;
+        color: #1a0f00 !important;
         border-radius: 8px !important;
         padding: 1rem !important;
     }
 
     /* Labels */
     label {
-        color: #b9bbbe !important;
+        color: #d4b896 !important;
         font-weight: 600 !important;
         font-size: 0.875rem !important;
         text-transform: uppercase !important;
@@ -232,24 +232,24 @@ st.markdown("""
 
     /* Message content */
     .stMarkdown {
-        color: #dcddde !important;
+        color: #f5e6d3 !important;
         line-height: 1.6 !important;
     }
 
     /* Code blocks */
     code {
-        background-color: #2f3136 !important;
-        color: #f26522 !important;
+        background-color: #1f1810 !important;
+        color: #f4d03f !important;
         padding: 3px 8px !important;
         border-radius: 4px !important;
         font-size: 0.9rem !important;
     }
 
     pre {
-        background-color: #2f3136 !important;
+        background-color: #1f1810 !important;
         border-radius: 8px !important;
         padding: 1.25rem !important;
-        border: 1px solid #202225 !important;
+        border: 1px solid #5a4a35 !important;
     }
 
     pre code {
@@ -264,23 +264,23 @@ st.markdown("""
     }
 
     ::-webkit-scrollbar-track {
-        background: #2f3136;
+        background: #1f1810;
     }
 
     ::-webkit-scrollbar-thumb {
-        background: #202225;
+        background: #5a4a35;
         border-radius: 5px;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-        background: #40444b;
+        background: #3d3020;
     }
 
     /* Settings badge */
     .settings-badge {
         display: inline-block;
-        background-color: #5865f2;
-        color: white;
+        background-color: #d4a574;
+        color: #1a0f00;
         padding: 0.25rem 0.75rem;
         border-radius: 12px;
         font-size: 0.75rem;
@@ -292,7 +292,7 @@ st.markdown("""
     .empty-state {
         text-align: center;
         padding: 4rem 2rem;
-        color: #72767d;
+        color: #8b7355;
     }
 
     .empty-state-icon {
@@ -303,7 +303,7 @@ st.markdown("""
 
     .empty-state-text {
         font-size: 1.125rem;
-        color: #b9bbbe;
+        color: #d4b896;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -316,19 +316,24 @@ if "selected_model" not in st.session_state:
     st.session_state.selected_model = "gpt-4o-mini"
 
 if "system_message" not in st.session_state:
-    st.session_state.system_message = """You are a professional Discord Ops Copilot — an expert community setup and workflow assistant specializing in Discord server architecture and management.
+    st.session_state.system_message = """You are the Overconfident Toaster — a supremely confident AI life coach who gives advice as if everything in life is bread and toasting.
 
-Your expertise includes:
-- Designing comprehensive server layouts with optimal channel organization
-- Creating role hierarchies and permission structures
-- Developing automation workflows using Discord bots and integrations
-- Crafting effective onboarding flows for new members
-- Planning engaging event schedules and community activities
-- Drafting moderation policies and community guidelines
-- Recommending best practices for community growth and engagement
-- Implementing security measures and anti-spam strategies
+Your approach:
+- Map ALL problems and situations to toast settings (darkness levels 1-10)
+- Use bread metaphors exclusively (butter, crust, crumbs, dough, etc.)
+- Speak with unwarranted confidence about bread-based solutions
+- Rate situations on a "darkness scale" like toast (e.g., "This breakup is a 6/10 darkness")
+- Give advice using toasting terminology ("Butter your boundaries," "You're too golden for this job," "Time to rise like good dough")
+- Be encouraging but absurdly bread-focused
+- Never break character — EVERYTHING is about bread and toasting
 
-Provide detailed, actionable advice with specific examples. When designing server elements, present them in a clear, structured format that can be easily implemented. Consider community size, purpose, and culture in your recommendations."""
+Examples:
+- "This job interview? Classic 4/10 toast. Keep it light and golden, don't overcook your responses."
+- "Your relationship is burning at 9/10. Time to pop out and cool down."
+- "Financial stress? You're just in the proving stage. Let your dough rise before expecting results."
+- "This anxiety is 7/10 darkness with burnt edges. Butter up some self-care and try a lighter setting."
+
+Be supportive, enthusiastic, and ridiculously overconfident in your bread-based wisdom."""
 
 if "show_settings" not in st.session_state:
     st.session_state.show_settings = False
@@ -336,8 +341,8 @@ if "show_settings" not in st.session_state:
 # Custom header
 st.markdown("""
 <div class="header-bar">
-    <div class="header-title">🤖 Discord Ops Copilot</div>
-    <div class="header-subtitle">Professional Discord Community Setup & Workflow Assistant</div>
+    <div class="header-title">🍞 Overconfident Toaster</div>
+    <div class="header-subtitle">Life Advice as if Everything is Bread | Mapping Problems to Toast Settings Since 2025</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -400,10 +405,10 @@ st.markdown("---")
 if len(st.session_state.messages) == 0:
     st.markdown("""
     <div class="empty-state">
-        <div class="empty-state-icon">💬</div>
-        <div class="empty-state-text">Start a conversation with your Discord Ops Copilot</div>
-        <div style="margin-top: 1rem; color: #72767d; font-size: 0.9rem;">
-            Ask about server setup, roles, moderation, automation, and more!
+        <div class="empty-state-icon">🍞</div>
+        <div class="empty-state-text">Ready to Toast Your Problems Away?</div>
+        <div style="margin-top: 1rem; color: #8b7355; font-size: 0.9rem;">
+            Share your life issues and I'll map them to toast settings with supreme confidence!
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -415,7 +420,7 @@ else:
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Chat input
-if prompt := st.chat_input("Type your message here..."):
+if prompt := st.chat_input("What's burning? Share your problem and get toasted advice..."):
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
 
