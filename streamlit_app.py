@@ -57,9 +57,10 @@ st.markdown("""
     .header-bar {
         background: linear-gradient(90deg, #d4a574 0%, #c89350 100%);
         padding: 1rem 2rem;
-        border-radius: 0;
+        border-radius: 8px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
         margin-bottom: 0;
+        margin-top: 1rem;
     }
 
     .header-title {
@@ -76,6 +77,41 @@ st.markdown("""
         color: rgba(26, 15, 0, 0.8);
         font-size: 0.875rem;
         margin: 0.25rem 0 0 0;
+    }
+
+    /* Toast avatar container */
+    .toast-avatar-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem;
+        background: rgba(212, 165, 116, 0.1);
+        border-radius: 12px;
+        margin: 1rem 0.5rem;
+    }
+
+    /* Toast speech bubble */
+    .toast-speech {
+        background-color: #3d3020;
+        border: 2px solid #d4a574;
+        border-radius: 12px;
+        padding: 1rem;
+        margin: 1rem 0;
+        position: relative;
+        color: #f5e6d3;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .toast-speech:before {
+        content: '';
+        position: absolute;
+        left: -10px;
+        top: 20px;
+        width: 0;
+        height: 0;
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        border-right: 10px solid #d4a574;
     }
 
     /* Chat container with proper spacing */
@@ -338,16 +374,152 @@ Be supportive, enthusiastic, and ridiculously overconfident in your bread-based 
 if "show_settings" not in st.session_state:
     st.session_state.show_settings = False
 
-# Custom header
-st.markdown("""
-<div class="header-bar">
-    <div class="header-title">🍞 Overconfident Toaster</div>
-    <div class="header-subtitle">Life Advice as if Everything is Bread | Mapping Problems to Toast Settings Since 2025</div>
-</div>
-""", unsafe_allow_html=True)
+if "toast_mood" not in st.session_state:
+    st.session_state.toast_mood = "confident"  # confident, thinking, encouraging, concerned, excited
+
+# Toast avatar SVG with expressions
+def get_toast_avatar(mood="confident"):
+    """Generate an animated toast avatar with different facial expressions"""
+
+    # Face expressions based on mood
+    expressions = {
+        "confident": {
+            "eyes": "M30,40 Q35,35 40,40 M60,40 Q65,35 70,40",  # Confident eyes
+            "mouth": "M35,65 Q50,75 65,65",  # Big smile
+            "eyebrows": "M28,30 L42,28 M58,28 L72,30",  # Raised confident brows
+            "blush": ""
+        },
+        "thinking": {
+            "eyes": "M35,40 L35,42 M65,40 L65,42",  # Focused eyes
+            "mouth": "M40,65 L60,65",  # Straight thinking mouth
+            "eyebrows": "M28,32 L42,30 M58,30 L72,32",  # Thinking brows
+            "blush": ""
+        },
+        "encouraging": {
+            "eyes": "M30,38 Q35,42 40,38 M60,38 Q65,42 70,38",  # Warm eyes
+            "mouth": "M35,62 Q50,70 65,62",  # Warm smile
+            "eyebrows": "M28,30 Q35,28 42,30 M58,30 Q65,28 72,30",  # Gentle brows
+            "blush": '<circle cx="25" cy="55" r="8" fill="#ff9999" opacity="0.4"/><circle cx="75" cy="55" r="8" fill="#ff9999" opacity="0.4"/>'
+        },
+        "concerned": {
+            "eyes": "M32,40 Q35,43 38,40 M62,40 Q65,43 68,40",  # Concerned eyes
+            "mouth": "M40,68 Q50,65 60,68",  # Concerned frown
+            "eyebrows": "M28,28 Q35,32 42,28 M58,28 Q65,32 72,28",  # Worried brows
+            "blush": ""
+        },
+        "excited": {
+            "eyes": "M30,35 Q35,30 40,35 M60,35 Q65,30 70,35",  # Wide excited eyes
+            "mouth": "M30,60 Q50,75 70,60",  # Big excited smile
+            "eyebrows": "M25,25 L40,23 M60,23 L75,25",  # Raised excited brows
+            "blush": '<circle cx="25" cy="55" r="8" fill="#ff9999" opacity="0.5"/><circle cx="75" cy="55" r="8" fill="#ff9999" opacity="0.5"/>'
+        }
+    }
+
+    expr = expressions.get(mood, expressions["confident"])
+
+    return f"""
+    <svg width="120" height="140" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+        <!-- Toast body with gradient -->
+        <defs>
+            <linearGradient id="toastGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#f4d4a0;stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#e8be8c;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#d4a574;stop-opacity:1" />
+            </linearGradient>
+            <linearGradient id="crustGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#c89350;stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#d4a574;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#c89350;stop-opacity:1" />
+            </linearGradient>
+        </defs>
+
+        <!-- Toast slice body -->
+        <rect x="15" y="20" width="70" height="85" rx="8" fill="url(#toastGradient)" stroke="#a67c52" stroke-width="2"/>
+
+        <!-- Crust texture (little dots) -->
+        <circle cx="25" cy="30" r="1.5" fill="#a67c52" opacity="0.6"/>
+        <circle cx="45" cy="28" r="1.5" fill="#a67c52" opacity="0.5"/>
+        <circle cx="65" cy="32" r="1.5" fill="#a67c52" opacity="0.6"/>
+        <circle cx="75" cy="35" r="1.5" fill="#a67c52" opacity="0.5"/>
+        <circle cx="30" cy="95" r="1.5" fill="#a67c52" opacity="0.6"/>
+        <circle cx="50" cy="98" r="1.5" fill="#a67c52" opacity="0.5"/>
+        <circle cx="70" cy="96" r="1.5" fill="#a67c52" opacity="0.6"/>
+
+        <!-- Butter pat on top -->
+        <rect x="35" y="8" width="30" height="8" rx="2" fill="#f4e8a0" opacity="0.9"/>
+        <rect x="37" y="10" width="26" height="4" rx="1" fill="#fff9d4" opacity="0.7"/>
+
+        <!-- Blush (if mood has it) -->
+        {expr["blush"]}
+
+        <!-- Eyes -->
+        <path d="{expr["eyes"]}" stroke="#5a4035" stroke-width="3" fill="none" stroke-linecap="round">
+            <animate attributeName="opacity" values="1;0;1" dur="3s" repeatCount="indefinite"/>
+        </path>
+
+        <!-- Eyebrows -->
+        <path d="{expr["eyebrows"]}" stroke="#5a4035" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+        <!-- Mouth -->
+        <path d="{expr["mouth"]}" stroke="#5a4035" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+        <!-- Sparkle effect for confidence -->
+        <g opacity="0.8">
+            <circle cx="10" cy="25" r="2" fill="#f4d03f">
+                <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="90" cy="30" r="2" fill="#f4d03f">
+                <animate attributeName="opacity" values="0;1;0" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="12" cy="70" r="2" fill="#f4d03f">
+                <animate attributeName="opacity" values="0;1;0" dur="2s" begin="1s" repeatCount="indefinite"/>
+            </circle>
+        </g>
+
+        <!-- Floating animation -->
+        <animateTransform
+            attributeName="transform"
+            type="translate"
+            values="0,0; 0,-3; 0,0"
+            dur="2s"
+            repeatCount="indefinite"/>
+    </svg>
+    """
+
+# Custom header with toast avatar
+header_col1, header_col2 = st.columns([1, 5])
+
+with header_col1:
+    st.markdown(get_toast_avatar(st.session_state.toast_mood), unsafe_allow_html=True)
+
+with header_col2:
+    st.markdown("""
+    <div class="header-bar">
+        <div class="header-title">🍞 Overconfident Toaster</div>
+        <div class="header-subtitle">Life Advice as if Everything is Bread | Mapping Problems to Toast Settings Since 2025</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 # Main container
 st.markdown('<div class="chat-container">', unsafe_allow_html=True)
+
+def detect_toast_mood(text):
+    """Detect the appropriate toast mood based on response content"""
+    text_lower = text.lower()
+
+    # Keywords for different moods
+    if any(word in text_lower for word in ['perfect', 'golden', 'excellent', 'you got this', 'confidence']):
+        return "confident"
+    elif any(word in text_lower for word in ['hmm', 'consider', 'perhaps', 'might want']):
+        return "thinking"
+    elif any(word in text_lower for word in ['you can', 'believe', 'trust', 'support', 'butter']):
+        return "encouraging"
+    elif any(word in text_lower for word in ['burnt', 'overcooked', 'careful', 'warning', 'concern']):
+        return "concerned"
+    elif any(word in text_lower for word in ['amazing', 'fantastic', 'wonderful', 'rise', 'proof']):
+        return "excited"
+    else:
+        return "confident"  # Default
 
 # Top control bar with settings
 col1, col2, col3 = st.columns([2, 1, 1])
@@ -403,6 +575,11 @@ st.markdown("---")
 
 # Display chat messages or empty state
 if len(st.session_state.messages) == 0:
+    # Show welcoming toast avatar
+    st.markdown('<div class="toast-avatar-container">', unsafe_allow_html=True)
+    st.markdown(get_toast_avatar("excited"), unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+    
     st.markdown("""
     <div class="empty-state">
         <div class="empty-state-icon">🍞</div>
@@ -413,9 +590,25 @@ if len(st.session_state.messages) == 0:
     </div>
     """, unsafe_allow_html=True)
 else:
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+    for i, message in enumerate(st.session_state.messages):
+        if message["role"] == "assistant":
+            # Detect mood from message content
+            mood = detect_toast_mood(message["content"])
+            
+            # Show toast avatar with the message
+            avatar_col, message_col = st.columns([1, 4])
+            
+            with avatar_col:
+                st.markdown('<div class="toast-avatar-container">', unsafe_allow_html=True)
+                st.markdown(get_toast_avatar(mood), unsafe_allow_html=True)
+                st.markdown('</div>', unsafe_allow_html=True)
+            
+            with message_col:
+                st.markdown(f'<div class="toast-speech">{message["content"]}</div>', unsafe_allow_html=True)
+        else:
+            # User message - normal display
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
 
 st.markdown('</div>', unsafe_allow_html=True)
 
@@ -428,8 +621,19 @@ if prompt := st.chat_input("What's burning? Share your problem and get toasted a
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # Generate AI response
-    with st.chat_message("assistant"):
+    # Generate AI response with toast avatar
+    # Show thinking toast while generating
+    st.session_state.toast_mood = "thinking"
+    
+    avatar_response_col, message_response_col = st.columns([1, 4])
+    
+    with avatar_response_col:
+        st.markdown('<div class="toast-avatar-container">', unsafe_allow_html=True)
+        avatar_placeholder = st.empty()
+        avatar_placeholder.markdown(get_toast_avatar("thinking"), unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+    
+    with message_response_col:
         message_placeholder = st.empty()
         full_response = ""
 
@@ -448,13 +652,20 @@ if prompt := st.chat_input("What's burning? Share your problem and get toasted a
             for chunk in stream:
                 if chunk.choices[0].delta.content is not None:
                     full_response += chunk.choices[0].delta.content
-                    message_placeholder.markdown(full_response + "▌")
+                    message_placeholder.markdown(f'<div class="toast-speech">{full_response}▌</div>', unsafe_allow_html=True)
 
-            message_placeholder.markdown(full_response)
+            # Detect final mood and update avatar
+            final_mood = detect_toast_mood(full_response)
+            st.session_state.toast_mood = final_mood
+            avatar_placeholder.markdown(get_toast_avatar(final_mood), unsafe_allow_html=True)
+            
+            message_placeholder.markdown(f'<div class="toast-speech">{full_response}</div>', unsafe_allow_html=True)
 
         except Exception as e:
             error_message = f"❌ Error: {str(e)}"
-            message_placeholder.markdown(error_message)
+            st.session_state.toast_mood = "concerned"
+            avatar_placeholder.markdown(get_toast_avatar("concerned"), unsafe_allow_html=True)
+            message_placeholder.markdown(f'<div class="toast-speech">{error_message}</div>', unsafe_allow_html=True)
             full_response = error_message
 
     # Add assistant response to chat history
