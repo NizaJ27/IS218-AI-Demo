@@ -2,6 +2,32 @@
 
 > **This project has been customized as a Discord Ops Copilot** — A professional AI assistant for Discord community setup, server architecture, role management, automation workflows, onboarding flows, event scheduling, and moderation policy design.
 
+## 🚀 Quick Start
+
+Run the Discord Ops Copilot web interface:
+
+```bash
+# Easy way - using Make
+make run
+
+# Or directly with the script
+./run.sh
+
+# Or manually
+streamlit run streamlit_app.py
+```
+
+**Available Commands:**
+```bash
+make help      # Show all available commands
+make run       # Run the Streamlit application
+make test      # Run all tests
+make coverage  # Run tests with coverage report
+make install   # Install dependencies
+make clean     # Clean up generated files
+make dev       # Run in development mode with auto-reload
+```
+
 ---
 
 # 🚀 Enterprise AI Development
