@@ -40,19 +40,19 @@ st.markdown("""
     [data-testid="collapsedControl"] {
         display: none;
     }
-    
+
     /* Main background - Discord dark grey */
     .stApp {
         background-color: #36393f;
     }
-    
+
     /* Remove default padding for full-width design */
     .main .block-container {
         max-width: 100%;
         padding: 0;
         background-color: #36393f;
     }
-    
+
     /* Custom header bar */
     .header-bar {
         background: linear-gradient(90deg, #5865f2 0%, #4752c4 100%);
@@ -61,7 +61,7 @@ st.markdown("""
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         margin-bottom: 0;
     }
-    
+
     .header-title {
         color: white;
         font-size: 1.75rem;
@@ -71,13 +71,13 @@ st.markdown("""
         align-items: center;
         gap: 0.75rem;
     }
-    
+
     .header-subtitle {
         color: rgba(255, 255, 255, 0.8);
         font-size: 0.875rem;
         margin: 0.25rem 0 0 0;
     }
-    
+
     /* Chat container with proper spacing */
     .chat-container {
         max-width: 1200px;
@@ -85,18 +85,18 @@ st.markdown("""
         padding: 2rem;
         min-height: calc(100vh - 250px);
     }
-    
+
     /* Headers - Discord blurple */
     h1, h2, h3 {
         color: #5865f2 !important;
         font-weight: 700 !important;
     }
-    
+
     /* Subheaders and captions */
     .stCaption, p {
         color: #b9bbbe !important;
     }
-    
+
     /* Text inputs and text areas - rounded */
     .stTextInput > div > div > input,
     .stTextArea > div > div > textarea {
@@ -106,22 +106,22 @@ st.markdown("""
         border: 1px solid #202225 !important;
         font-size: 0.95rem !important;
     }
-    
+
     .stTextArea > div > div > textarea {
         min-height: 120px !important;
     }
-    
+
     /* Selectbox - rounded */
     .stSelectbox > div > div {
         background-color: #40444b !important;
         border-radius: 8px !important;
         border: 1px solid #202225 !important;
     }
-    
+
     .stSelectbox > div > div > div {
         color: #dcddde !important;
     }
-    
+
     /* Buttons - Discord blurple with rounded corners */
     .stButton > button {
         background-color: #5865f2 !important;
@@ -133,13 +133,13 @@ st.markdown("""
         transition: all 0.2s ease !important;
         font-size: 0.95rem !important;
     }
-    
+
     .stButton > button:hover {
         background-color: #4752c4 !important;
         transform: translateY(-2px);
         box-shadow: 0 6px 16px rgba(88, 101, 242, 0.5) !important;
     }
-    
+
     /* Chat messages - rounded and polished */
     .stChatMessage {
         background-color: #40444b !important;
@@ -148,19 +148,19 @@ st.markdown("""
         margin-bottom: 1rem !important;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
     }
-    
+
     /* User messages - slightly different color */
     [data-testid="stChatMessageContent"] {
         padding: 0 !important;
     }
-    
+
     /* Chat input - rounded and integrated */
     .stChatInputContainer {
         padding: 1.5rem 2rem !important;
         background-color: #2f3136 !important;
         border-top: 2px solid #202225 !important;
     }
-    
+
     .stChatInputContainer > div {
         background-color: #40444b !important;
         border-radius: 24px !important;
@@ -169,7 +169,7 @@ st.markdown("""
         margin: 0 auto !important;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
     }
-    
+
     .stChatInput > div > div > input {
         background-color: transparent !important;
         color: #dcddde !important;
@@ -177,7 +177,7 @@ st.markdown("""
         font-size: 1rem !important;
         padding: 1rem 1.5rem !important;
     }
-    
+
     /* Expander for settings */
     .streamlit-expanderHeader {
         background-color: #40444b !important;
@@ -187,11 +187,11 @@ st.markdown("""
         padding: 1rem !important;
         border: 1px solid #202225 !important;
     }
-    
+
     .streamlit-expanderHeader:hover {
         background-color: #4f545c !important;
     }
-    
+
     .streamlit-expanderContent {
         background-color: #2f3136 !important;
         border-radius: 0 0 8px 8px !important;
@@ -199,13 +199,13 @@ st.markdown("""
         border-top: none !important;
         padding: 1.5rem !important;
     }
-    
+
     /* Divider */
     hr {
         border-color: #4f545c !important;
         margin: 1rem 0 !important;
     }
-    
+
     /* Success/Info messages */
     .stSuccess {
         background-color: #3ba55d !important;
@@ -213,14 +213,14 @@ st.markdown("""
         border-radius: 8px !important;
         padding: 1rem !important;
     }
-    
+
     .stInfo {
         background-color: #5865f2 !important;
         color: white !important;
         border-radius: 8px !important;
         padding: 1rem !important;
     }
-    
+
     /* Labels */
     label {
         color: #b9bbbe !important;
@@ -229,13 +229,13 @@ st.markdown("""
         text-transform: uppercase !important;
         letter-spacing: 0.5px !important;
     }
-    
+
     /* Message content */
     .stMarkdown {
         color: #dcddde !important;
         line-height: 1.6 !important;
     }
-    
+
     /* Code blocks */
     code {
         background-color: #2f3136 !important;
@@ -244,38 +244,38 @@ st.markdown("""
         border-radius: 4px !important;
         font-size: 0.9rem !important;
     }
-    
+
     pre {
         background-color: #2f3136 !important;
         border-radius: 8px !important;
         padding: 1.25rem !important;
         border: 1px solid #202225 !important;
     }
-    
+
     pre code {
         background-color: transparent !important;
         padding: 0 !important;
     }
-    
+
     /* Scrollbar */
     ::-webkit-scrollbar {
         width: 10px;
         height: 10px;
     }
-    
+
     ::-webkit-scrollbar-track {
         background: #2f3136;
     }
-    
+
     ::-webkit-scrollbar-thumb {
         background: #202225;
         border-radius: 5px;
     }
-    
+
     ::-webkit-scrollbar-thumb:hover {
         background: #40444b;
     }
-    
+
     /* Settings badge */
     .settings-badge {
         display: inline-block;
@@ -287,20 +287,20 @@ st.markdown("""
         font-weight: 600;
         margin-left: 0.5rem;
     }
-    
+
     /* Empty state message */
     .empty-state {
         text-align: center;
         padding: 4rem 2rem;
         color: #72767d;
     }
-    
+
     .empty-state-icon {
         font-size: 4rem;
         margin-bottom: 1rem;
         opacity: 0.5;
     }
-    
+
     .empty-state-text {
         font-size: 1.125rem;
         color: #b9bbbe;
@@ -369,12 +369,12 @@ if st.session_state.show_settings:
             index=MODELS.index(st.session_state.selected_model),
             key="model_select"
         )
-        
+
         st.markdown("---")
-        
+
         st.markdown("### System Message")
         st.caption("Define how the AI should behave and respond")
-        
+
         new_system_message = st.text_area(
             "System Instructions",
             value=st.session_state.system_message,
@@ -382,13 +382,13 @@ if st.session_state.show_settings:
             key="system_msg_input",
             help="This message sets the AI's personality, expertise, and response style."
         )
-        
+
         col_a, col_b = st.columns(2)
         with col_a:
             if st.button("💾 Save Settings", use_container_width=True):
                 st.session_state.system_message = new_system_message
                 st.success("✅ Settings saved successfully!")
-                
+
         with col_b:
             if st.button("❌ Close Settings", use_container_width=True):
                 st.session_state.show_settings = False
