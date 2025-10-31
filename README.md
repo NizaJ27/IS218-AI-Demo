@@ -1,10 +1,39 @@
-# 🤖 Discord Ops Copilot
+# 🍞 The Bread Therapist Collective
 
-> **This project has been customized as a Discord Ops Copilot** — A professional AI assistant for Discord community setup, server architecture, role management, automation workflows, onboarding flows, event scheduling, and moderation policy design.
+> **Professional AI Therapy Through the Lens of Bread** — An innovative mental health support application featuring 8 specialized therapist personas, each representing a different therapeutic approach and named after a unique type of bread.
+
+## 🌟 Features
+
+### 8 Specialized Therapist Personas
+
+Choose from evidence-based therapeutic approaches, each with a unique bread-themed personality:
+
+- **🥖 Dr. Sourdough** - Cognitive Behavioral Therapy (CBT)
+- **🥐 Dr. Brioche** - Psychodynamic Therapy  
+- **🍞 Dr. Whole Wheat** - Acceptance and Commitment Therapy (ACT)
+- **🍞 Dr. Pumpernickel** - Dialectical Behavior Therapy (DBT)
+- **🥖 Dr. Ciabatta** - Person-Centered Therapy
+- **🫓 Dr. Focaccia** - Solution-Focused Brief Therapy
+- **🍞 Dr. Rye** - Existential Therapy
+- **🫓 Dr. Naan** - Mindfulness-Based Therapy
+
+### Beautiful UI/UX
+- Light, warm toast-inspired color scheme with radial gradient background
+- Interactive therapist selection cards with hover effects
+- Responsive chat interface with streaming responses
+- Clean, modern design optimized for therapy sessions
+
+### Smart Features
+- OpenAI GPT-4 powered conversations with therapeutic expertise
+- Model selection (GPT-4o, GPT-4o-mini, GPT-4-turbo, etc.)
+- Session persistence with message history
+- Easy therapist switching mid-session
+
+---
 
 ## 🚀 Quick Start
 
-Run the Discord Ops Copilot web interface:
+Run the Bread Therapist Collective web interface:
 
 ```bash
 # Easy way - using Make
@@ -30,23 +59,159 @@ make dev       # Run in development mode with auto-reload
 
 ---
 
-# 🚀 Enterprise AI Development
+## � Prerequisites
 
-> **Learn professional software development by building a real AI application**
-
-[![Tests](https://img.shields.io/badge/tests-69%20passing-brightgreen)]()
-[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)]()
-[![TDD](https://img.shields.io/badge/methodology-TDD-orange)]()
+- Python 3.13+
+- OpenAI API key
+- Virtual environment (recommended)
 
 ---
 
-## What You'll Learn in 2 Weeks
+## 🛠️ Setup
 
-Build a creative AI application using **OpenAI's APIs** while mastering:
+1. **Clone the repository**
+```bash
+git clone <repository-url>
+cd enterprise_ai_demo1_websearch
+```
+
+2. **Set up environment**
+```bash
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+```
+
+3. **Install dependencies**
+```bash
+make install
+# or
+pip install -r requirements.txt
+```
+
+4. **Configure OpenAI API key**
+```bash
+# Create .env file
+echo "OPENAI_API_KEY=your-api-key-here" > .env
+```
+
+5. **Run the application**
+```bash
+make run
+```
+
+---
+
+## 🧪 Testing
+
+This project follows **Test-Driven Development** practices with 100% code coverage:
+
+```bash
+# Run all tests
+make test
+
+# Run with coverage report
+make coverage
+
+# Open HTML coverage report
+open htmlcov/index.html
+```
+
+**Test Statistics:**
+- ✅ 69 tests passing
+- 📊 100% code coverage
+- 🎯 TDD methodology
+
+---
+
+## 🏗️ Architecture
+
+### Clean Layered Design
+
+```
+src/
+├── models.py          # Data models (SearchRequest, SearchResult)
+├── client.py          # OpenAI API client
+├── parser.py          # Response parsing logic
+├── search_service.py  # Business logic layer
+├── main.py           # Application entry point
+└── logging_config.py  # Centralized logging
+
+streamlit_app.py      # Web interface with therapist personas
+tests/                # Comprehensive test suite
+```
+
+### Key Design Principles
+- **Separation of Concerns**: Each module has a single responsibility
+- **Dependency Injection**: Testable, flexible components
+- **Type Safety**: Pydantic models with validation
+- **Error Handling**: Graceful degradation with informative messages
+- **Logging**: Structured logging for debugging and monitoring
+
+---
+
+## 🎨 Therapist Personas
+
+Each therapist combines professional therapeutic techniques with bread-themed wisdom:
+
+### Dr. Sourdough (CBT)
+- Focuses on identifying and challenging negative thought patterns
+- Helps break down problems systematically
+- Teaches practical coping strategies
+- "Let's examine that thought pattern - it seems like it's over-proofed with catastrophizing."
+
+### Dr. Brioche (Psychodynamic)
+- Explores unconscious patterns and past experiences
+- Examines how early relationships shape current behaviors
+- Patient and deeply reflective approach
+- "This pattern has many layers, like brioche. What might be hidden in the deeper folds?"
+
+### Dr. Whole Wheat (ACT)
+- Promotes acceptance of difficult emotions
+- Helps clarify personal values
+- Encourages committed action aligned with values
+- "Fighting anxiety is like trying to remove the bran - it's part of the whole grain."
+
+### Dr. Pumpernickel (DBT)
+- Balances acceptance and change
+- Teaches mindfulness, distress tolerance, emotion regulation
+- Validates emotions while building skills
+- "Both things can be true - you're doing your best AND you can learn new skills."
+
+### Dr. Ciabatta (Person-Centered)
+- Provides unconditional positive regard
+- Trusts in your inherent capacity for growth
+- Non-directive, empathetic listening
+- "You have all the ingredients within you already."
+
+### Dr. Focaccia (Solution-Focused)
+- Focuses on solutions rather than problems
+- Uses future-oriented questions
+- Identifies existing strengths and resources
+- "What would be the first small thing you'd notice if this problem vanished?"
+
+### Dr. Rye (Existential)
+- Explores meaning, freedom, and authenticity
+- Helps confront existential concerns
+- Philosophical and courage-focused
+- "You're grappling with the weight of freedom - you can become any kind of bread you choose."
+
+### Dr. Naan (Mindfulness-Based)
+- Cultivates present-moment awareness
+- Non-judgmental observation of thoughts
+- Develops self-compassion
+- "Notice your thoughts bubbling up - observe them, but you don't have to grab each one."
+
+---
+
+## 📚 What You'll Learn
+
+This codebase demonstrates professional software development practices:
 
 **Test-Driven Development** • **Clean Architecture** • **Enterprise Logging** • **Professional Git** • **CI/CD**
 
 **The Twist:** This codebase is designed as a **living textbook**. Every file teaches you concepts through narrative comments and real examples.
+
+````
 
 ---
 
@@ -81,6 +246,21 @@ Build a creative AI application using **OpenAI's APIs** while mastering:
 ---
 
 ## 📖 Your Learning Resources
+
+---
+
+## 💻 Technology Stack
+
+- **Frontend**: Streamlit (interactive web interface)
+- **AI Engine**: OpenAI GPT-4 (GPT-4o, GPT-4o-mini, GPT-4-turbo)
+- **Backend**: Python 3.13+
+- **Testing**: pytest with 100% coverage
+- **Styling**: Custom CSS with toast-inspired color palette
+- **Development**: TDD methodology, clean architecture
+
+---
+
+## 📖 Documentation
 
 ### 🎓 Course Materials
 - **[Learning Path Map](docs/LEARNING_PATH.md)** - Master roadmap
@@ -292,8 +472,8 @@ After completing this course, you will confidently:
 
 **Questions?** Check the [Getting Started Guide](docs/GETTING_STARTED.md) or ask your instructor.
 
-*Built with ❤️ for students who want to understand, not just copy-paste*
+*The Bread Therapist Collective - Where Professional Therapy Meets Artisan Bread*
 
-**Let's build something amazing! 🚀**
+**Ready to begin your therapeutic journey? Choose your therapist and start healing! 🍞**
 
 </div>
