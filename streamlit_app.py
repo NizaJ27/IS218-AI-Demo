@@ -1,20 +1,25 @@
 """
-Overconfident Toaster - Streamlit Chat Interface
+The Bread Therapist Collective - Personalized AI Therapy Platform
 
-A supremely confident AI life coach that gives advice as if everything is bread.
-Maps all problems to toast settings and speaks in bread metaphors.
+Professional therapy through the lens of bread with personalized user experiences,
+intake assessments, therapist recommendations, and session progression tracking.
 """
 
 import os
 import streamlit as st
 from openai import OpenAI
 from dotenv import load_dotenv
+from src.user_manager import UserManager
+from src.therapy_intake import TherapyIntake
 
 # Load environment variables
 load_dotenv()
 
 # Initialize OpenAI client
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+# Initialize user manager
+user_manager = UserManager()
 
 # Available models
 MODELS = [
@@ -632,13 +637,228 @@ if "system_message" not in st.session_state:
 if "show_settings" not in st.session_state:
     st.session_state.show_settings = False
 
+# User authentication session state
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False
+
+if "username" not in st.session_state:
+    st.session_state.username = None
+
+if "user_profile" not in st.session_state:
+    st.session_state.user_profile = None
+
+if "intake_complete" not in st.session_state:
+    st.session_state.intake_complete = False
+
+if "show_intake" not in st.session_state:
+    st.session_state.show_intake = False
+
+# ============================================================================
+# AUTHENTICATION SCREEN
+# ============================================================================
+
+if not st.session_state.authenticated:
+    st.markdown("""
+    <div class="header-bar">
+        <div class="header-title">🍞 The Bread Therapist Collective</div>
+        <div class="header-subtitle">Personalized AI Therapy | Login to Begin Your Journey</div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown('<div class="chat-container">', unsafe_allow_html=True)
+    
+    # Login/Register tabs
+    auth_tab1, auth_tab2 = st.tabs(["Login", "Create Account"])
+    
+    with auth_tab1:
+        st.markdown("### Welcome Back")
+        login_username = st.text_input("Username", key="login_username")
+        login_password = st.text_input("Password", type="password", key="login_password")
+        
+        if st.button("Login", use_container_width=True):
+            if user_manager.authenticate(login_username, login_password):
+                st.session_state.authenticated = True
+                st.session_state.username = login_username
+                st.session_state.user_profile = user_manager.get_user_profile(login_username)
+                st.session_state.intake_complete = st.session_state.user_profile.get("intake_completed", False)
+                
+                # Set therapist if already assigned
+                if st.session_state.user_profile.get("assigned_therapist"):
+                    st.session_state.selected_therapist = st.session_state.user_profile["assigned_therapist"]
+                    st.session_state.system_message = THERAPISTS[st.session_state.selected_therapist]["system_message"]
+                
+                st.success(f"Welcome back, {login_username}!")
+                st.rerun()
+            else:
+                st.error("Invalid username or password")
+    
+    with auth_tab2:
+        st.markdown("### Create Your Account")
+        reg_username = st.text_input("Choose a username", key="reg_username")
+        reg_password = st.text_input("Choose a password", type="password", key="reg_password")
+        reg_password_confirm = st.text_input("Confirm password", type="password", key="reg_password_confirm")
+        
+        if st.button("Create Account", use_container_width=True):
+            if not reg_username or not reg_password:
+                st.error("Please fill in all fields")
+            elif reg_password != reg_password_confirm:
+                st.error("Passwords don't match")
+            elif len(reg_password) < 6:
+                st.error("Password must be at least 6 characters")
+            else:
+                if user_manager.create_user(reg_username, reg_password):
+                    st.success("Account created! Please login.")
+                else:
+                    st.error("Username already exists")
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.stop()  # Stop execution here if not authenticated
+
+# ============================================================================
+# INTAKE ASSESSMENT SCREEN
+# ============================================================================
+
+if st.session_state.authenticated and not st.session_state.intake_complete:
+    st.markdown("""
+    <div class="header-bar">
+        <div class="header-title">🍞 Welcome to The Bread Therapist Collective</div>
+        <div class="header-subtitle">Let's find the right therapist for you</div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown('<div class="chat-container">', unsafe_allow_html=True)
+    
+    st.markdown(f"### Hello, {st.session_state.username}! 👋")
+    st.markdown("To provide you with the best care, we'd like to understand your needs. This brief assessment will help us recommend the most suitable therapist for you.")
+    
+    st.markdown("---")
+    
+    # Get intake questions
+    questions = TherapyIntake.get_questions()
+    responses = {}
+    
+    # Display questions
+    for i, question in enumerate(questions):
+        st.markdown(f"**{i+1}. {question['question']}**")
+        
+        if question["type"] == "multiple_choice":
+            options = [opt["text"] for opt in question["options"]]
+            selected = st.radio(
+                "Select one:",
+                options,
+                key=f"q_{question['id']}",
+                label_visibility="collapsed"
+            )
+            responses[question["id"]] = options.index(selected)
+        
+        elif question["type"] == "text":
+            responses[question["id"]] = st.text_area(
+                question.get("instruction", "Your answer:"),
+                key=f"q_{question['id']}",
+                height=100
+            )
+        
+        st.markdown("")  # Spacing
+    
+    if st.button("Complete Assessment", use_container_width=True, type="primary"):
+        # Analyze responses
+        recommended_therapist, scores = TherapyIntake.analyze_responses(responses)
+        explanation = TherapyIntake.get_recommendation_explanation(recommended_therapist, scores)
+        
+        # Save to profile
+        user_manager.save_intake_assessment(
+            st.session_state.username,
+            responses,
+            recommended_therapist
+        )
+        
+        # Update session state
+        st.session_state.intake_complete = True
+        st.session_state.selected_therapist = recommended_therapist
+        st.session_state.system_message = THERAPISTS[recommended_therapist]["system_message"]
+        st.session_state.user_profile = user_manager.get_user_profile(st.session_state.username)
+        
+        # Update user profile with assigned therapist
+        user_manager.update_user_profile(st.session_state.username, {
+            "assigned_therapist": recommended_therapist
+        })
+        
+        # Show recommendation
+        st.success("Assessment complete!")
+        st.markdown(explanation)
+        st.info("Click below to start your first session!")
+        
+        if st.button("Begin Therapy", use_container_width=True):
+            st.rerun()
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.stop()  # Stop here if intake not complete
+
+# ============================================================================
+# MAIN THERAPY INTERFACE
+# ============================================================================
+
 # Custom header
 st.markdown("""
 <div class="header-bar">
     <div class="header-title">🍞 The Bread Therapist Collective</div>
-    <div class="header-subtitle">Professional Therapy Through the Lens of Bread | Choose Your Therapist & Their Approach</div>
+    <div class="header-subtitle">Professional Therapy Through the Lens of Bread | Personalized for {}</div>
 </div>
-""", unsafe_allow_html=True)
+""".format(st.session_state.username), unsafe_allow_html=True)
+
+# Sidebar with user dashboard
+with st.sidebar:
+    st.markdown("### 👤 Your Profile")
+    st.markdown(f"**{st.session_state.username}**")
+    
+    if st.session_state.user_profile:
+        profile = st.session_state.user_profile
+        
+        st.markdown("---")
+        st.markdown("### 📊 Progress")
+        st.metric("Total Sessions", profile.get("total_sessions", 0))
+        
+        if profile.get("assigned_therapist"):
+            therapist = THERAPISTS[profile["assigned_therapist"]]
+            st.markdown(f"**Your Therapist:** {therapist['emoji']} {therapist['name']}")
+            st.caption(therapist['therapy'])
+        
+        st.markdown("---")
+        st.markdown("### 🎯 Therapy Goals")
+        goals = profile.get("therapy_goals", [])
+        if goals:
+            for i, goal in enumerate(goals, 1):
+                st.markdown(f"{i}. {goal}")
+        else:
+            st.caption("No goals set yet")
+            if st.button("Set Goals", key="set_goals_btn"):
+                st.session_state.show_goal_input = True
+        
+        # Goal input
+        if st.session_state.get("show_goal_input", False):
+            new_goal = st.text_input("Add a goal:")
+            if st.button("Add Goal"):
+                current_goals = profile.get("therapy_goals", [])
+                current_goals.append(new_goal)
+                user_manager.set_therapy_goals(st.session_state.username, current_goals)
+                st.session_state.user_profile = user_manager.get_user_profile(st.session_state.username)
+                st.session_state.show_goal_input = False
+                st.rerun()
+        
+        st.markdown("---")
+        st.markdown("### 📝 Recent Sessions")
+        session_history = profile.get("session_history", [])
+        if session_history:
+            for session in session_history[-3:]:  # Show last 3
+                st.caption(f"🗓️ {session['date'][:10]} with {session['therapist'][:15]}...")
+        else:
+            st.caption("No sessions yet")
+        
+        st.markdown("---")
+        if st.button("🔄 Change Therapist", use_container_width=True, key="sidebar_change_therapist"):
+            st.session_state.selected_therapist = None
+            st.session_state.messages = []
+            st.rerun()
 
 # Main container
 st.markdown('<div class="chat-container">', unsafe_allow_html=True)
@@ -775,3 +995,50 @@ if st.session_state.selected_therapist is not None:
 
         # Add assistant response to chat history
         st.session_state.messages.append({"role": "assistant", "content": full_response})
+        
+        # Auto-save session after each exchange
+        if len(st.session_state.messages) % 4 == 0:  # Save every 2 exchanges
+            user_manager.log_session(
+                st.session_state.username,
+                st.session_state.selected_therapist,
+                st.session_state.messages
+            )
+
+# Footer with session info and logout
+if st.session_state.authenticated:
+    st.markdown("---")
+    col_footer1, col_footer2, col_footer3 = st.columns([2, 1, 1])
+    
+    with col_footer1:
+        if st.session_state.user_profile:
+            total_sessions = st.session_state.user_profile.get("total_sessions", 0)
+            st.caption(f"👤 {st.session_state.username} | 📊 {total_sessions} sessions completed")
+    
+    with col_footer2:
+        if st.button("💾 Save Session", use_container_width=True):
+            if st.session_state.messages:
+                session_id = user_manager.log_session(
+                    st.session_state.username,
+                    st.session_state.selected_therapist,
+                    st.session_state.messages
+                )
+                st.success(f"Session saved! (ID: {session_id})")
+                st.session_state.user_profile = user_manager.get_user_profile(st.session_state.username)
+    
+    with col_footer3:
+        if st.button("🚪 Logout", use_container_width=True):
+            # Save session before logout
+            if st.session_state.messages:
+                user_manager.log_session(
+                    st.session_state.username,
+                    st.session_state.selected_therapist,
+                    st.session_state.messages
+                )
+            
+            # Clear session state
+            st.session_state.authenticated = False
+            st.session_state.username = None
+            st.session_state.user_profile = None
+            st.session_state.messages = []
+            st.session_state.selected_therapist = None
+            st.rerun()
