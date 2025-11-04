@@ -1,7 +1,7 @@
 #!/bin/bash
-# Run the Discord Ops Copilot Streamlit Application
+# Run the Bread Therapist Collective Streamlit Application
 
-echo "🤖 Starting Discord Ops Copilot..."
+echo "🍞 Starting The Bread Therapist Collective..."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
@@ -26,4 +26,4 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo ""
 
 # Run streamlit
-streamlit run streamlit_app.py
+streamlit run therapy_app/streamlit_app.py

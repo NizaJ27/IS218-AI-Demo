@@ -22,7 +22,7 @@ test: ## Run all tests
 
 coverage: ## Run tests with coverage report
 	@echo "📊 Running tests with coverage..."
-	@pytest --cov=src --cov-report=term-missing --cov-report=html
+	@pytest --cov=therapy_app/src --cov-report=term-missing --cov-report=html
 	@echo "✅ Coverage report generated in htmlcov/"
 
 clean: ## Clean up generated files and caches
@@ -42,4 +42,8 @@ format: ## Format code (if you have a formatter installed)
 
 dev: ## Run in development mode with auto-reload
 	@echo "🔧 Starting in development mode..."
-	@streamlit run streamlit_app.py --server.runOnSave=true
+	@streamlit run therapy_app/streamlit_app.py --server.runOnSave=true
+
+stop: ## Stop the running Streamlit application
+	@echo "🛑 Stopping Streamlit..."
+	@lsof -ti:8501 | xargs kill -9 2>/dev/null || echo "No Streamlit process running"
