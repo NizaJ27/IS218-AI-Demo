@@ -18,7 +18,7 @@
 Choose from evidence-based therapeutic approaches, each with a unique bread-themed personality:
 
 - **🥖 Dr. Sourdough** - Cognitive Behavioral Therapy (CBT)
-- **🥐 Dr. Brioche** - Psychodynamic Therapy  
+- **🥐 Dr. Brioche** - Psychodynamic Therapy
 - **🍞 Dr. Whole Wheat** - Acceptance and Commitment Therapy (ACT)
 - **🍞 Dr. Pumpernickel** - Dialectical Behavior Therapy (DBT)
 - **🥖 Dr. Ciabatta** - Person-Centered Therapy

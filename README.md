@@ -20,7 +20,7 @@ This repository is organized into two main sections:Choose from evidence-based t
 
 ### 🍞 **`therapy_app/`** - The Bread Therapist Collective- **🥖 Dr. Sourdough** - Cognitive Behavioral Therapy (CBT)
 
-A complete, production-ready mental health support application featuring:- **🥐 Dr. Brioche** - Psychodynamic Therapy  
+A complete, production-ready mental health support application featuring:- **🥐 Dr. Brioche** - Psychodynamic Therapy
 
 - 8 specialized AI therapist personas (each named after bread!)- **🍞 Dr. Whole Wheat** - Acceptance and Commitment Therapy (ACT)
 
@@ -300,33 +300,82 @@ make dev       # Run in development mode with auto-reload---
 
 ## 📖 Key Documentation
 
-## 🎨 Therapist Personas
-
 ### For App Users
-
-- **[Therapy App README](therapy_app/README.md)** - How to use The Bread Therapist CollectiveEach therapist combines professional therapeutic techniques with bread-themed wisdom:
-
+- **[Therapy App README](therapy_app/README.md)** - How to use The Bread Therapist Collective
 - **[Personalization System](therapy_app/PERSONALIZATION_SUMMARY.md)** - How the recommendation algorithm works
 
-### Dr. Sourdough (CBT)
-
-### For Developers/Students- Focuses on identifying and challenging negative thought patterns
-
-- **[Getting Started](docs/GETTING_STARTED.md)** - Setup in 5-10 minutes- Helps break down problems systematically
-
-- **[Learning Path](docs/LEARNING_PATH.md)** - Master roadmap- Teaches practical coping strategies
-
-- **[TDD Workflow](docs/TDD_WORKFLOW.md)** - Test-driven development- "Let's examine that thought pattern - it seems like it's over-proofed with catastrophizing."
-
+### For Developers/Students
+- **[Getting Started](docs/GETTING_STARTED.md)** - Setup in 5-10 minutes
+- **[Learning Path](docs/LEARNING_PATH.md)** - Master roadmap
+- **[TDD Workflow](docs/TDD_WORKFLOW.md)** - Test-driven development
 - **[Code as Textbook](docs/CODE_AS_TEXTBOOK.md)** - How to read this code
+- **[AI Collaboration](docs/AI_COLLABORATION.md)** - Working with AI tools
+- **[Git Workflow](docs/GIT_WORKFLOW.md)** - Professional version control
+- **[Project Ideas](docs/PROJECT_IDEAS.md)** - 60+ project ideas
 
-- **[AI Collaboration](docs/AI_COLLABORATION.md)** - Working with AI tools### Dr. Brioche (Psychodynamic)
+---
 
-- **[Git Workflow](docs/GIT_WORKFLOW.md)** - Professional version control- Explores unconscious patterns and past experiences
+## 📚 Complete Documentation Index
 
-- **[Project Ideas](docs/PROJECT_IDEAS.md)** - 60+ project ideas- Examines how early relationships shape current behaviors
+### 🍞 Therapy Application
+- **[Therapy App README](therapy_app/README.md)** - Complete application documentation
+- **[Personalization Summary](therapy_app/PERSONALIZATION_SUMMARY.md)** - User authentication, intake, session logging details
+- **[Streamlit Guide](STREAMLIT_GUIDE.md)** - Streamlit framework documentation
 
-- Patient and deeply reflective approach
+### 🎓 Course & Learning Materials
+- **[Getting Started](docs/GETTING_STARTED.md)** - 5-10 minute setup guide
+- **[Learning Path](docs/LEARNING_PATH.md)** - Master roadmap with narrative reading
+- **[Course Structure](docs/COURSE_STRUCTURE.md)** - 2-week session plan
+- **[Student Guide](docs/STUDENT_GUIDE.md)** - Day-by-day checklist
+- **[Code as Textbook](docs/CODE_AS_TEXTBOOK.md)** - How to read this codebase
+- **[Student Critique](STUDENT_CRITIQUE.md)** - Student feedback and improvements
+
+### 🛠️ Development Guides
+- **[TDD Workflow](docs/TDD_WORKFLOW.md)** - Test-driven development (15 min read)
+- **[AI Collaboration](docs/AI_COLLABORATION.md)** - Working with Claude/AI tools (10 min read)
+- **[Git Workflow](docs/GIT_WORKFLOW.md)** - Professional commits and version control (10 min read)
+- **[Logging Guide](docs/LOGGING.md)** - Enterprise logging practices (5 min read)
+
+### 📐 Architecture & Technical
+- **[Architecture Overview](docs/architecture.md)** - System diagrams and design decisions
+- **[OpenAI Tools Research](docs/openai_tools_research_oct2025.md)** - Complete API reference (1,300 lines)
+- **[Web Search OpenAI](docs/web_search_openai.md)** - Tool behavior, payloads, and examples
+
+### 💡 Project Resources
+- **[Project Ideas](docs/PROJECT_IDEAS.md)** - 60+ ideas with difficulty ratings
+- **[Project Launch Kit](docs/PROJECT_LAUNCH_KIT.md)** - Scope and planning template
+- **[Demo Playbook](docs/DEMO_PLAYBOOK.md)** - Prepare your final presentation
+- **[Grading Rubric](docs/GRADING.md)** - Evaluation criteria
+
+### 🧪 Hands-On Labs
+- **[Lab 01: Models](docs/labs/LAB_01_MODELS.md)** - Dataclasses and type hints
+- **[Lab 02: Client](docs/labs/LAB_02_CLIENT.md)** - API clients and error handling
+- **[Lab 03: Parser](docs/labs/LAB_03_PARSER.md)** - Data transformation
+- **[Lab 04: Service](docs/labs/LAB_04_SERVICE.md)** - Business logic layer
+- **[Lab 05: Main](docs/labs/LAB_05_MAIN.md)** - CLI design
+- **[Lab 06: Logging](docs/labs/LAB_06_LOGGING.md)** - Enterprise logging
+
+### 📦 Archive (Legacy Documentation)
+- **[Archive Docs](docs/archive/)** - Historical documentation and old versions
+  - [AI Prompts](docs/archive/AI_PROMPTS.md)
+  - [Dear Students](docs/archive/DEAR_STUDENTS.md)
+  - [Docs Index](docs/archive/DOCS_INDEX.md)
+  - [Git Guide](docs/archive/GIT_GUIDE.md)
+  - [How to Work with AI](docs/archive/HOW_TO_WORK_WITH_AI.md)
+  - [Instructor Guide](docs/archive/INSTRUCTOR_GUIDE.md)
+  - [Logging Guide](docs/archive/LOGGING_GUIDE.md)
+  - [Project Ideas (Old)](docs/archive/PROJECT_IDEAS.md)
+  - [Project Summary](docs/archive/PROJECT_SUMMARY.md)
+  - [Quick TDD Guide](docs/archive/QUICK_TDD_GUIDE.md)
+  - [Quickstart](docs/archive/QUICKSTART.md)
+  - [README Drafts](docs/archive/README*.md)
+  - [Reorganization](docs/archive/REORGANIZATION.md)
+  - [Start Here](docs/archive/START_HERE.md)
+  - [Tutorial](docs/archive/TUTORIAL.md)
+
+---
+
+## 🎨 Therapist Personas
 
 ---- "This pattern has many layers, like brioche. What might be hidden in the deeper folds?"
 
@@ -422,19 +471,19 @@ By exploring this repository, you'll master:
 
 **The Twist:** This codebase is designed as a **living textbook**. Every file teaches you concepts through narrative comments and real examples.
 
-✅ Building robust API clients with error handling  
+✅ Building robust API clients with error handling
 
 ✅ Writing comprehensive tests using TDD  ````
 
-✅ Structuring applications with clean architecture  
+✅ Structuring applications with clean architecture
 
 ✅ Implementing enterprise logging and monitoring  ---
 
-✅ Using professional Git workflows  
+✅ Using professional Git workflows
 
 ✅ Collaborating effectively with AI tools  ## 🎯 Three Ways to Start
 
-✅ Creating beautiful, functional UIs  
+✅ Creating beautiful, functional UIs
 
 ✅ Managing user authentication and data  <table>
 

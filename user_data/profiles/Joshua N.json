@@ -2,13 +2,20 @@
   "username": "Joshua N",
   "password_hash": "1813e62d8da6295b825d8922e6648245c75aa5ce623cb4adbe0453f4a715b272",
   "created_at": "2025-11-04T11:32:21.050128",
-  "last_login": "2025-11-04T11:32:31.445711",
-  "assigned_therapist": null,
-  "recommended_therapist": null,
-  "intake_completed": false,
-  "intake_responses": {},
+  "last_login": "2025-11-04T14:37:08.812542",
+  "assigned_therapist": "Sourdough (Cognitive Behavioral Therapy)",
+  "recommended_therapist": "Sourdough (Cognitive Behavioral Therapy)",
+  "intake_completed": true,
+  "intake_responses": {
+    "primary_concern": 0,
+    "therapy_preference": 0,
+    "emotional_style": 0,
+    "timeline": 0,
+    "goals": "I want to be able to better express myself and my emotions, I would also like to better prioritize myself and while still maintaining healthy relationships\n"
+  },
   "therapy_goals": [],
   "progress_notes": [],
   "total_sessions": 0,
-  "session_history": []
+  "session_history": [],
+  "intake_date": "2025-11-04T14:37:46.698254"
 }
