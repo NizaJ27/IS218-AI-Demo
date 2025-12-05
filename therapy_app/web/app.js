@@ -527,39 +527,194 @@ class ChatManager {
 
     async callOpenAI(userMessage) {
         // TODO: Replace with actual OpenAI API call
-        // For now, return simulated response
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        // For now, return intelligent simulated response based on context
+        await new Promise(resolve => setTimeout(resolve, 2000));
         
         const therapist = THERAPISTS[this.appState.currentTherapist];
+        const messageLower = userMessage.toLowerCase();
         
-        // Simulated therapeutic responses based on therapist type
+        // Analyze user message for context and sentiment
+        const context = this.analyzeMessage(messageLower);
+        
+        // Generate contextual response based on therapist type and user's message
+        return this.generateTherapeuticResponse(therapist, userMessage, context);
+    }
+
+    analyzeMessage(messageLower) {
+        const context = {
+            isGreeting: /^(hi|hello|hey|good morning|good evening)/.test(messageLower),
+            hasAnxiety: /(anxious|anxiety|worried|worry|nervous|panic|stress|overwhelm)/.test(messageLower),
+            hasDepression: /(depressed|depression|sad|hopeless|empty|numb|down)/.test(messageLower),
+            hasAnger: /(angry|anger|mad|frustrated|irritated|rage)/.test(messageLower),
+            hasRelationship: /(relationship|partner|spouse|family|friend|people)/.test(messageLower),
+            hasPast: /(past|childhood|before|used to|history|remember)/.test(messageLower),
+            hasThoughts: /(think|thought|believe|mind|racing thoughts)/.test(messageLower),
+            hasFeelings: /(feel|feeling|emotion|emotional)/.test(messageLower),
+            hasQuestion: /\?/.test(messageLower),
+            isShort: messageLower.split(' ').length < 5,
+            mentionsChange: /(change|different|better|improve|help)/.test(messageLower),
+            mentionsGoals: /(goal|want|wish|hope|need)/.test(messageLower)
+        };
+        return context;
+    }
+
+    generateTherapeuticResponse(therapist, userMessage, context) {
+        // Handle greetings
+        if (context.isGreeting) {
+            return `Hello! I'm ${therapist.name}. I'm here to support you through ${therapist.approach}. What brings you to therapy today?`;
+        }
+
+        // Generate therapy-specific contextual responses
         const responses = {
-            sourdough: [
-                "That's an interesting observation. Let's explore the thoughts that lead to these feelings. What goes through your mind when this happens?",
-                "I hear you. In CBT, we often look at the connection between thoughts, feelings, and behaviors. Can you identify the automatic thoughts that arise in this situation?"
-            ],
-            brioche: [
-                "I'm noticing patterns in what you're sharing. How do you think your past experiences might be influencing how you're feeling now?",
-                "That resonates with something we discussed earlier. Let's explore what this might mean for your current relationships."
-            ],
-            // Add more responses for other therapists...
+            sourdough: this.generateCBTResponse(userMessage, context),
+            brioche: this.generatePsychodynamicResponse(userMessage, context),
+            wholewheat: this.generateACTResponse(userMessage, context),
+            pumpernickel: this.generateDBTResponse(userMessage, context),
+            ciabatta: this.generatePersonCenteredResponse(userMessage, context),
+            focaccia: this.generateSolutionFocusedResponse(userMessage, context),
+            rye: this.generateExistentialResponse(userMessage, context),
+            naan: this.generateMindfulnessResponse(userMessage, context)
         };
 
-        const therapistResponses = responses[therapist.id] || [
-            "Thank you for sharing that with me. Tell me more about how this affects you.",
-            "I'm here to support you. What would be most helpful to explore right now?"
-        ];
+        return responses[therapist.id] || this.generateGenericResponse(userMessage, context);
+    }
 
-        return therapistResponses[Math.floor(Math.random() * therapistResponses.length)];
+    generateCBTResponse(userMessage, context) {
+        if (context.hasThoughts && context.hasAnxiety) {
+            return "I hear that you're experiencing anxious thoughts. In CBT, we explore how our thoughts influence our feelings. What specific thoughts are going through your mind when you feel this anxiety? Are there patterns you notice?";
+        }
+        if (context.hasAnxiety) {
+            return "Anxiety can be challenging. Let's look at this through a CBT lens. When you notice these anxious feelings, what situation triggers them? And what thoughts come up for you in those moments?";
+        }
+        if (context.hasDepression && context.hasThoughts) {
+            return "Thank you for sharing that with me. Depression often involves negative thought patterns. Can you help me understand the thoughts that accompany these feelings? What are you telling yourself?";
+        }
+        if (context.hasAnger) {
+            return "Anger is a valid emotion, and it often signals something important. In CBT, we look at the thoughts behind the anger. What goes through your mind in these situations? What meaning are you giving to what happened?";
+        }
+        if (context.mentionsChange || context.mentionsGoals) {
+            return "I appreciate you wanting to make changes. In CBT, we work on identifying and challenging unhelpful thought patterns. What would be most helpful to work on first? What thoughts or behaviors would you like to change?";
+        }
+        return "I'm listening carefully to what you're sharing. In CBT, we focus on the connection between thoughts, feelings, and behaviors. Can you tell me more about what thoughts arise in this situation?";
+    }
+
+    generatePsychodynamicResponse(userMessage, context) {
+        if (context.hasPast) {
+            return "You're touching on something from your past. These earlier experiences often shape how we relate to situations today. What feelings come up as you reflect on this? How might this be connected to what you're experiencing now?";
+        }
+        if (context.hasRelationship) {
+            return "Relationships are a window into our inner world. As we explore this, I'm curious about the patterns you notice. How does this relationship remind you of earlier relationships in your life?";
+        }
+        if (context.hasAnxiety || context.hasDepression) {
+            return "These feelings you're describing—they're significant. Sometimes our current emotions are connected to unresolved experiences. What comes to mind when you sit with these feelings? Are there memories or earlier experiences that surface?";
+        }
+        return "I'm noticing what you're sharing, and I wonder about the deeper meaning here. What associations come to mind? Sometimes our unconscious guides us toward understanding—what might your feelings be trying to tell you?";
+    }
+
+    generateACTResponse(userMessage, context) {
+        if (context.hasAnxiety || context.hasFeelings) {
+            return "Thank you for sharing these difficult feelings. In ACT, we don't try to eliminate uncomfortable emotions—we learn to make room for them. What would it be like to simply observe this feeling without trying to change it? What values matter to you in this situation?";
+        }
+        if (context.mentionsChange) {
+            return "Change is about moving toward what matters to you. Instead of focusing on eliminating discomfort, let's explore your values. When you imagine a meaningful life, what does that look like? What actions align with those values?";
+        }
+        if (context.hasThoughts) {
+            return "I hear you getting caught up in these thoughts. In ACT, we practice defusion—observing thoughts without getting tangled in them. Can you notice these thoughts as mental events, rather than absolute truths? What happens if you hold them more lightly?";
+        }
+        return "What I'm hearing is important. In ACT, we ask: even with these difficult experiences, what matters to you? What would you do if this feeling weren't an obstacle? How can you move toward your values, even in small ways?";
+    }
+
+    generateDBTResponse(userMessage, context) {
+        if (context.hasAnger || (context.hasFeelings && context.hasRelationship)) {
+            return "I hear the intensity in what you're sharing. DBT teaches us that all emotions are valid, even the difficult ones. Let's practice dialectics—both validating your feelings AND looking at skills that might help. What emotion are you experiencing most strongly right now?";
+        }
+        if (context.hasAnxiety) {
+            return "Anxiety in the moment can be overwhelming. Let's use some DBT skills. First, I want to validate—this is genuinely difficult. Now, what might help you tolerate this distress? Have you tried any grounding techniques like the 5-4-3-2-1 method?";
+        }
+        if (context.hasRelationship) {
+            return "Relationships can bring up intense emotions. DBT's interpersonal effectiveness skills can help here. What do you need from this relationship? How can we balance asking for what you need with maintaining the relationship and your self-respect?";
+        }
+        return "Thank you for being open with me. DBT is about balancing acceptance and change. I want to validate what you're experiencing—it makes sense given your situation. At the same time, what skills might help you in this moment? Let's explore what would be most helpful.";
+    }
+
+    generatePersonCenteredResponse(userMessage, context) {
+        if (context.isShort) {
+            return "I sense there's more beneath the surface. I'm here, fully present with you. Take your time—what would you like to explore?";
+        }
+        if (context.hasFeelings) {
+            return "I hear the emotion in what you're sharing, and I want you to know it's safe to feel this here. You know yourself best—what do these feelings mean to you? What are they telling you about what you need?";
+        }
+        if (context.mentionsChange) {
+            return "Your desire for change is meaningful. I trust in your capacity to find your own answers. What feels right to you? What does your inner wisdom tell you about the direction you want to go?";
+        }
+        return "I'm here with you, hearing not just your words but what's beneath them. You're the expert on your own experience. What else would you like me to understand about this? What feels most important to explore?";
+    }
+
+    generateSolutionFocusedResponse(userMessage, context) {
+        if (context.mentionsGoals) {
+            return "I love that you're thinking about what you want. Let's get really specific—what would be different if this problem were solved? On a scale of 1-10, where are you now, and what would a 10 look like?";
+        }
+        if (context.mentionsChange) {
+            return "Change is already happening just by you being here. Let's focus on what's working. When is this problem less intense or not present at all? What are you doing differently in those moments? Those are your resources!";
+        }
+        if (context.hasDepression || context.hasAnxiety) {
+            return "I hear this is difficult. Let me ask you something—despite this challenge, what's still going okay in your life? Even small things count. When this feeling is less intense, even slightly, what's different? Let's build on that.";
+        }
+        return "Thank you for sharing that. I want to focus on solutions and strengths. Tell me about a time when you handled something similar successfully. What did you do? What strengths did you use? How can we apply that here?";
+    }
+
+    generateExistentialResponse(userMessage, context) {
+        if (context.mentionsGoals || context.mentionsChange) {
+            return "You're grappling with questions of meaning and purpose—that's deeply human. What gives your life meaning? When you imagine looking back on your life, what would make it feel worthwhile? These are the questions that guide authentic living.";
+        }
+        if (context.hasAnxiety) {
+            return "Anxiety often arises when we confront our freedom and responsibility. You're facing the reality that you must choose, and with choice comes uncertainty. What are you anxious about choosing? What would it mean to take responsibility for this decision?";
+        }
+        if (context.hasDepression) {
+            return "What you're experiencing touches on existential questions—questions of meaning, purpose, perhaps feelings of emptiness. These are profound concerns. What matters to you? When do you feel most alive, most authentic? Let's explore what gives your existence meaning.";
+        }
+        return "You're touching on something fundamental about the human experience. We all face questions of freedom, meaning, death, and isolation. How does this connect to your sense of purpose? What would it mean to live more authentically in relation to this concern?";
+    }
+
+    generateMindfulnessResponse(userMessage, context) {
+        if (context.hasThoughts) {
+            return "I hear your mind is quite active. Let's practice mindfulness together. Can you notice these thoughts without judgment—like clouds passing in the sky? What happens when you simply observe them, rather than getting caught up in their content?";
+        }
+        if (context.hasAnxiety) {
+            return "Anxiety pulls us into the future. Let's practice coming back to this present moment. Right now, as you sit here, what do you notice? What physical sensations are present? Can you bring gentle awareness to your breath, just for a few moments?";
+        }
+        if (context.hasFeelings) {
+            return "Thank you for noticing and naming this feeling. Mindfulness invites us to be with our emotions without pushing them away or getting overwhelmed. Can you locate this feeling in your body? What happens if you bring kind, curious attention to it?";
+        }
+        return "What you're sharing is important. Let's bring mindful awareness to this experience. Can you notice what's happening right now, in this moment, without judgment? What physical sensations are present? What thoughts? Let's practice being with what is.";
+    }
+
+    generateGenericResponse(userMessage, context) {
+        if (context.hasQuestion) {
+            return "That's an important question. Rather than me providing answers, I'm curious what you think. What feels true for you? What does your intuition tell you?";
+        }
+        return "Thank you for sharing that with me. I want to make sure I'm understanding fully. Can you tell me more about what this means for you? How does this affect you?";
     }
 
     showTypingIndicator() {
         const messagesContainer = document.getElementById('chatMessages');
+        const therapist = THERAPISTS[this.appState.currentTherapist];
+        
+        const typingWrapper = document.createElement('div');
+        typingWrapper.id = 'typingIndicator';
+        typingWrapper.className = 'message-wrapper therapist-wrapper';
+        
+        const senderLabel = document.createElement('div');
+        senderLabel.className = 'message-sender';
+        senderLabel.innerHTML = `${therapist.emoji} ${therapist.name}`;
+        typingWrapper.appendChild(senderLabel);
+        
         const typing = document.createElement('div');
-        typing.id = 'typingIndicator';
         typing.className = 'message-bubble therapist-message';
         typing.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
-        messagesContainer.appendChild(typing);
+        typingWrapper.appendChild(typing);
+        
+        messagesContainer.appendChild(typingWrapper);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 
@@ -942,13 +1097,29 @@ class UIManager {
         const welcome = container.querySelector('.welcome-message');
         if (welcome) welcome.remove();
         
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message-bubble ${role === 'user' ? 'user-message' : 'therapist-message'}`;
+        // Create message wrapper
+        const messageWrapper = document.createElement('div');
+        messageWrapper.className = `message-wrapper ${role === 'user' ? 'user-wrapper' : 'therapist-wrapper'}`;
         
         if (animate) {
-            messageDiv.style.opacity = '0';
-            messageDiv.style.transform = 'translateY(10px)';
+            messageWrapper.style.opacity = '0';
+            messageWrapper.style.transform = 'translateY(10px)';
         }
+        
+        // Add sender label
+        const senderLabel = document.createElement('div');
+        senderLabel.className = 'message-sender';
+        if (role === 'user') {
+            senderLabel.textContent = this.appState.user.username;
+        } else {
+            const therapist = THERAPISTS[this.appState.currentTherapist];
+            senderLabel.innerHTML = `${therapist.emoji} ${therapist.name}`;
+        }
+        messageWrapper.appendChild(senderLabel);
+        
+        // Create message bubble
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message-bubble ${role === 'user' ? 'user-message' : 'therapist-message'}`;
         
         const contentDiv = document.createElement('div');
         contentDiv.className = 'message-content';
@@ -960,12 +1131,14 @@ class UIManager {
         
         messageDiv.appendChild(contentDiv);
         messageDiv.appendChild(timeDiv);
-        container.appendChild(messageDiv);
+        messageWrapper.appendChild(messageDiv);
+        
+        container.appendChild(messageWrapper);
         
         if (animate) {
             setTimeout(() => {
-                messageDiv.style.opacity = '1';
-                messageDiv.style.transform = 'translateY(0)';
+                messageWrapper.style.opacity = '1';
+                messageWrapper.style.transform = 'translateY(0)';
             }, 10);
         }
         
