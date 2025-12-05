@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="The Bread Therapist Collective - Professional AI therapy with personalized support">
+    <meta name="theme-color" content="#f5f0e8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Bread Therapy">
+    
+    <title>The Bread Therapist Collective</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+    <link rel="apple-touch-icon" href="assets/icon-192.png">
+    
+    <!-- Preconnect to OpenAI API -->
+    <link rel="preconnect" href="https://api.openai.com">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- App Shell -->
+    <div id="app" class="app-container">
+        
+        <!-- Header Navigation -->
+        <header class="app-header" role="banner">
+            <div class="header-content">
+                <div class="logo-section">
+                    <span class="logo-icon">🍞</span>
+                    <h1 class="logo-text">Bread Therapist Collective</h1>
+                </div>
+                <nav class="header-nav" aria-label="Main navigation">
+                    <button class="nav-btn" id="homeBtn" aria-label="Home">
+                        <span class="nav-icon">🏠</span>
+                        <span class="nav-label">Home</span>
+                    </button>
+                    <button class="nav-btn" id="therapistsBtn" aria-label="Therapists">
+                        <span class="nav-icon">👥</span>
+                        <span class="nav-label">Therapists</span>
+                    </button>
+                    <button class="nav-btn" id="historyBtn" aria-label="History">
+                        <span class="nav-icon">📖</span>
+                        <span class="nav-label">History</span>
+                    </button>
+                    <button class="nav-btn" id="profileBtn" aria-label="Profile">
+                        <span class="nav-icon">👤</span>
+                        <span class="nav-label">Profile</span>
+                    </button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="app-main" role="main">
+            
+            <!-- Auth Screen -->
+            <section id="authScreen" class="screen active">
+                <div class="auth-container">
+                    <div class="auth-card">
+                        <div class="auth-header">
+                            <div class="auth-icon">🍞</div>
+                            <h2 class="auth-title">Welcome to Bread Therapy</h2>
+                            <p class="auth-subtitle">Your personalized AI therapy journey</p>
+                        </div>
+                        
+                        <div class="auth-tabs">
+                            <button class="tab-btn active" data-tab="login">Log In</button>
+                            <button class="tab-btn" data-tab="signup">Sign Up</button>
+                        </div>
+
+                        <!-- Login Form -->
+                        <form id="loginForm" class="auth-form active">
+                            <div class="form-group">
+                                <label for="loginUsername">Username</label>
+                                <input 
+                                    type="text" 
+                                    id="loginUsername" 
+                                    class="form-input"
+                                    placeholder="Enter your username"
+                                    autocomplete="username"
+                                    required
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="loginPassword">Password</label>
+                                <input 
+                                    type="password" 
+                                    id="loginPassword" 
+                                    class="form-input"
+                                    placeholder="Enter your password"
+                                    autocomplete="current-password"
+                                    required
+                                >
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-large">
+                                Log In
+                            </button>
+                        </form>
+
+                        <!-- Signup Form -->
+                        <form id="signupForm" class="auth-form">
+                            <div class="form-group">
+                                <label for="signupUsername">Username</label>
+                                <input 
+                                    type="text" 
+                                    id="signupUsername" 
+                                    class="form-input"
+                                    placeholder="Choose a username"
+                                    autocomplete="username"
+                                    required
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="signupPassword">Password</label>
+                                <input 
+                                    type="password" 
+                                    id="signupPassword" 
+                                    class="form-input"
+                                    placeholder="Create a password"
+                                    autocomplete="new-password"
+                                    required
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="signupConfirm">Confirm Password</label>
+                                <input 
+                                    type="password" 
+                                    id="signupConfirm" 
+                                    class="form-input"
+                                    placeholder="Confirm your password"
+                                    autocomplete="new-password"
+                                    required
+                                >
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-large">
+                                Create Account
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Intake Assessment Screen -->
+            <section id="intakeScreen" class="screen">
+                <div class="intake-container">
+                    <div class="intake-card">
+                        <div class="intake-header">
+                            <h2>Let's Find Your Perfect Therapist</h2>
+                            <p>Answer a few questions to help us match you with the right approach</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="intakeProgress"></div>
+                            </div>
+                            <p class="progress-text"><span id="currentQuestion">1</span> of <span id="totalQuestions">5</span></p>
+                        </div>
+                        
+                        <form id="intakeForm" class="intake-form">
+                            <!-- Questions will be dynamically inserted here -->
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Therapist Selection Screen -->
+            <section id="therapistScreen" class="screen">
+                <div class="therapist-container">
+                    <h2 class="section-title">Choose Your Therapist</h2>
+                    <p class="section-subtitle">Each therapist brings a unique approach to support you</p>
+                    
+                    <!-- Recommended Therapist (if from intake) -->
+                    <div id="recommendedSection" class="recommended-section" style="display: none;">
+                        <h3 class="recommended-title">✨ Recommended For You</h3>
+                        <div id="recommendedCard"></div>
+                        <p class="recommended-note">Based on your assessment responses</p>
+                    </div>
+
+                    <!-- All Therapists -->
+                    <div class="therapist-grid" id="therapistGrid">
+                        <!-- Therapist cards will be dynamically inserted here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chat Screen -->
+            <section id="chatScreen" class="screen">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <button class="btn-icon" id="backBtn" aria-label="Back">
+                            <span>←</span>
+                        </button>
+                        <div class="chat-therapist-info">
+                            <span class="therapist-emoji" id="chatTherapistEmoji">🥖</span>
+                            <div>
+                                <h3 class="therapist-name" id="chatTherapistName">Dr. Sourdough</h3>
+                                <p class="therapist-approach" id="chatTherapistApproach">Cognitive Behavioral Therapy</p>
+                            </div>
+                        </div>
+                        <button class="btn-icon" id="chatOptionsBtn" aria-label="Options">
+                            <span>⋮</span>
+                        </button>
+                    </div>
+
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="welcome-message">
+                            <div class="welcome-icon">🍞</div>
+                            <p>Ready to begin your session?</p>
+                            <p class="welcome-subtitle">Share what's on your mind</p>
+                        </div>
+                    </div>
+
+                    <div class="chat-input-container">
+                        <form id="chatForm" class="chat-form">
+                            <textarea 
+                                id="chatInput"
+                                class="chat-input"
+                                placeholder="Share your thoughts..."
+                                rows="1"
+                                required
+                            ></textarea>
+                            <button type="submit" class="chat-send-btn" aria-label="Send message">
+                                <span>➤</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- History Screen -->
+            <section id="historyScreen" class="screen">
+                <div class="history-container">
+                    <h2 class="section-title">Session History</h2>
+                    <p class="section-subtitle">Review your therapy journey</p>
+                    
+                    <div class="history-stats">
+                        <div class="stat-card">
+                            <span class="stat-icon">📊</span>
+                            <div>
+                                <p class="stat-value" id="totalSessions">0</p>
+                                <p class="stat-label">Total Sessions</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-icon">🎯</span>
+                            <div>
+                                <p class="stat-value" id="goalsSet">0</p>
+                                <p class="stat-label">Goals Set</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-icon">📝</span>
+                            <div>
+                                <p class="stat-value" id="progressNotes">0</p>
+                                <p class="stat-label">Progress Notes</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="history-list" id="historyList">
+                        <!-- Session cards will be dynamically inserted here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Screen -->
+            <section id="profileScreen" class="screen">
+                <div class="profile-container">
+                    <div class="profile-header">
+                        <div class="profile-avatar">👤</div>
+                        <h2 class="profile-name" id="profileUsername">User</h2>
+                        <p class="profile-since">Member since <span id="memberSince">2024</span></p>
+                    </div>
+
+                    <div class="profile-section">
+                        <h3 class="profile-section-title">Therapy Goals</h3>
+                        <div id="goalsContainer" class="goals-container">
+                            <p class="empty-state-text">No goals set yet</p>
+                        </div>
+                        <button class="btn btn-secondary" id="addGoalBtn">+ Add Goal</button>
+                    </div>
+
+                    <div class="profile-section">
+                        <h3 class="profile-section-title">Progress Notes</h3>
+                        <div id="notesContainer" class="notes-container">
+                            <p class="empty-state-text">No progress notes yet</p>
+                        </div>
+                    </div>
+
+                    <div class="profile-section">
+                        <h3 class="profile-section-title">Settings</h3>
+                        <div class="settings-group">
+                            <label for="modelSelect">AI Model</label>
+                            <select id="modelSelect" class="form-select">
+                                <option value="gpt-4o">GPT-4o (Recommended)</option>
+                                <option value="gpt-4o-mini">GPT-4o Mini</option>
+                                <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                                <option value="gpt-4">GPT-4</option>
+                                <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-danger" id="logoutBtn">🚪 Log Out</button>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Toast Notifications -->
+        <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="loading-spinner"></div>
+            <p>Loading...</p>
+        </div>
+
+        <!-- Offline Indicator -->
+        <div id="offlineIndicator" class="offline-indicator">
+            <span>📡</span> You're offline
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+    <script>
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(registration => console.log('SW registered:', registration))
+                    .catch(error => console.log('SW registration failed:', error));
+            });
+        }
+    </script>
+</body>
+</html>
