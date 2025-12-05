@@ -53,6 +53,7 @@ The Therapy App uses a fully automated CI/CD pipeline:
                     ┌──────────────┐
                     │  Production  │
                     │    Server    │
+                    │theratoast.com│
                     │104.131.191.83│
                     └──────────────┘
 ```
@@ -71,6 +72,7 @@ The Therapy App uses a fully automated CI/CD pipeline:
 ### Required Accounts
 - [x] **GitHub Account:** Repository at `NizaJ27/IS218-AI-Demo`
 - [x] **Docker Hub Account:** Free account for image hosting
+- [x] **Domain Name:** theratoast.com (already purchased)
 - [ ] **Digital Ocean Server:** 104.131.191.83 (already provisioned)
 
 ### Required Software (Local)
@@ -81,7 +83,7 @@ The Therapy App uses a fully automated CI/CD pipeline:
 ### Server Requirements
 - Ubuntu 20.04+ with Docker installed
 - Minimum 1GB RAM, 1 CPU core
-- Public IP: 104.131.191.83
+- Domain: theratoast.com → 104.131.191.83
 - Ports 80/443 available
 
 ---
@@ -246,6 +248,10 @@ Connect to your server and set up the deployment environment.
 ### Step 1: SSH to Server
 
 ```bash
+# SSH using domain name
+ssh youruser@theratoast.com
+
+# Or using IP address
 ssh youruser@104.131.191.83
 ```
 
@@ -373,7 +379,11 @@ sudo ufw status
 curl http://localhost/health
 # Expected: healthy
 
-# Test from external
+# Test from external (using domain)
+curl http://theratoast.com/
+# Expected: HTML response
+
+# Or test using IP
 curl http://104.131.191.83/
 # Expected: HTML response
 ```
@@ -457,12 +467,16 @@ time="2025-01-XX" level=info msg="Starting /therapy_app_web"
 docker compose ps
 # Should show: therapy_app_web (running)
 
-# Test application
-curl http://104.131.191.83/health
+# Test application (using domain)
+curl http://theratoast.com/health
 # Expected: healthy
 
-curl http://104.131.191.83/
+curl http://theratoast.com/
 # Expected: HTML response
+
+# Or test using IP
+curl http://104.131.191.83/health
+curl http://104.131.191.83/
 
 # Check application logs
 docker compose logs web | tail -20
@@ -471,7 +485,8 @@ docker compose logs web | tail -20
 ### Step 6: Test in Browser
 
 Open in your browser:
-- http://104.131.191.83/
+- **http://theratoast.com/** (recommended)
+- http://104.131.191.83/ (alternative)
 
 You should see the Therapy App PWA! 🎉
 
@@ -793,8 +808,12 @@ sudo nano /etc/caddy/Caddyfile
 
 Add:
 ```caddyfile
-your-domain.com {
+theratoast.com {
     reverse_proxy localhost:80
+}
+
+www.theratoast.com {
+    redir https://theratoast.com{uri}
 }
 ```
 
@@ -884,12 +903,12 @@ git push origin main
 4. ✨ **GitHub Actions builds and tests automatically**
 5. ✨ **Docker image pushed to Docker Hub automatically**
 6. ✨ **Watchtower deploys to server automatically (~5 min)**
-7. Visit http://104.131.191.83/ to see changes live! 🎉
+7. Visit **https://theratoast.com/** to see changes live! 🎉
 
 **Next Steps:**
 
-- [ ] Configure custom domain with Caddy
-- [ ] Set up SSL/HTTPS
+- [ ] Set up SSL/HTTPS with Caddy (theratoast.com)
+- [ ] Configure DNS A record: theratoast.com → 104.131.191.83
 - [ ] Configure monitoring alerts
 - [ ] Add staging environment
 - [ ] Set up automated backups
@@ -905,4 +924,4 @@ git push origin main
 ---
 
 *Generated for Therapy App PWA - Bread Therapist Collective*  
-*Server: 104.131.191.83 | Repository: NizaJ27/IS218-AI-Demo*
+*Domain: theratoast.com | Server: 104.131.191.83 | Repository: NizaJ27/IS218-AI-Demo*
