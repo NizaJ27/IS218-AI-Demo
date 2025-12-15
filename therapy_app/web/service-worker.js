@@ -1,7 +1,7 @@
 // Service Worker for The Bread Therapist Collective PWA
 // Provides offline functionality, caching, and background sync
 
-const CACHE_VERSION = 'v1.0.0';
+const CACHE_VERSION = 'v1.1.0';
 const CACHE_NAME = `bread-therapy-${CACHE_VERSION}`;
 
 // Assets to cache immediately on install
