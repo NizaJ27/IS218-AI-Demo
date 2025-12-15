@@ -8,26 +8,26 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Bread Therapy">
-    
+
     <title>The Bread Therapist Collective</title>
-    
+
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
-    
+
     <!-- Favicons -->
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
     <link rel="apple-touch-icon" href="assets/icon-192.png">
-    
+
     <!-- Preconnect to OpenAI API -->
     <link rel="preconnect" href="https://api.openai.com">
-    
+
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <!-- App Shell -->
     <div id="app" class="app-container">
-        
+
         <!-- Header Navigation -->
         <header class="app-header" role="banner">
             <div class="header-content">
@@ -44,6 +44,14 @@
                         <span class="nav-icon">👥</span>
                         <span class="nav-label">Therapists</span>
                     </button>
+                    <button class="nav-btn" id="metricsBtn" aria-label="Metrics">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-label">Metrics</span>
+                    </button>
+                    <button class="nav-btn" id="journalBtn" aria-label="Journal">
+                        <span class="nav-icon">📔</span>
+                        <span class="nav-label">Journal</span>
+                    </button>
                     <button class="nav-btn" id="historyBtn" aria-label="History">
                         <span class="nav-icon">📖</span>
                         <span class="nav-label">History</span>
@@ -58,7 +66,7 @@
 
         <!-- Main Content Area -->
         <main class="app-main" role="main">
-            
+
             <!-- Auth Screen -->
             <section id="authScreen" class="screen active">
                 <div class="auth-container">
@@ -68,7 +76,7 @@
                             <h2 class="auth-title">Welcome to Bread Therapy</h2>
                             <p class="auth-subtitle">Your personalized AI therapy journey</p>
                         </div>
-                        
+
                         <div class="auth-tabs">
                             <button class="tab-btn active" data-tab="login">Log In</button>
                             <button class="tab-btn" data-tab="signup">Sign Up</button>
@@ -78,9 +86,9 @@
                         <form id="loginForm" class="auth-form active">
                             <div class="form-group">
                                 <label for="loginUsername">Username</label>
-                                <input 
-                                    type="text" 
-                                    id="loginUsername" 
+                                <input
+                                    type="text"
+                                    id="loginUsername"
                                     class="form-input"
                                     placeholder="Enter your username"
                                     autocomplete="username"
@@ -89,9 +97,9 @@
                             </div>
                             <div class="form-group">
                                 <label for="loginPassword">Password</label>
-                                <input 
-                                    type="password" 
-                                    id="loginPassword" 
+                                <input
+                                    type="password"
+                                    id="loginPassword"
                                     class="form-input"
                                     placeholder="Enter your password"
                                     autocomplete="current-password"
@@ -107,9 +115,9 @@
                         <form id="signupForm" class="auth-form">
                             <div class="form-group">
                                 <label for="signupUsername">Username</label>
-                                <input 
-                                    type="text" 
-                                    id="signupUsername" 
+                                <input
+                                    type="text"
+                                    id="signupUsername"
                                     class="form-input"
                                     placeholder="Choose a username"
                                     autocomplete="username"
@@ -118,9 +126,9 @@
                             </div>
                             <div class="form-group">
                                 <label for="signupPassword">Password</label>
-                                <input 
-                                    type="password" 
-                                    id="signupPassword" 
+                                <input
+                                    type="password"
+                                    id="signupPassword"
                                     class="form-input"
                                     placeholder="Create a password"
                                     autocomplete="new-password"
@@ -129,9 +137,9 @@
                             </div>
                             <div class="form-group">
                                 <label for="signupConfirm">Confirm Password</label>
-                                <input 
-                                    type="password" 
-                                    id="signupConfirm" 
+                                <input
+                                    type="password"
+                                    id="signupConfirm"
                                     class="form-input"
                                     placeholder="Confirm your password"
                                     autocomplete="new-password"
@@ -158,7 +166,7 @@
                             </div>
                             <p class="progress-text"><span id="currentQuestion">1</span> of <span id="totalQuestions">5</span></p>
                         </div>
-                        
+
                         <form id="intakeForm" class="intake-form">
                             <!-- Questions will be dynamically inserted here -->
                         </form>
@@ -171,7 +179,7 @@
                 <div class="therapist-container">
                     <h2 class="section-title">Choose Your Therapist</h2>
                     <p class="section-subtitle">Each therapist brings a unique approach to support you</p>
-                    
+
                     <!-- Recommended Therapist (if from intake) -->
                     <div id="recommendedSection" class="recommended-section" style="display: none;">
                         <h3 class="recommended-title">✨ Recommended For You</h3>
@@ -215,7 +223,7 @@
 
                     <div class="chat-input-container">
                         <form id="chatForm" class="chat-form">
-                            <textarea 
+                            <textarea
                                 id="chatInput"
                                 class="chat-input"
                                 placeholder="Share your thoughts..."
@@ -230,12 +238,186 @@
                 </div>
             </section>
 
+            <!-- Metrics Dashboard Screen -->
+            <section id="metricsScreen" class="screen">
+                <div class="metrics-container">
+                    <h2 class="section-title">Your Progress Metrics</h2>
+                    <p class="section-subtitle">Track your therapy journey and achievements</p>
+
+                    <!-- Key Metrics Overview -->
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-icon">🎯</div>
+                            <div class="metric-content">
+                                <h3 class="metric-value" id="metricGoalsTotal">0</h3>
+                                <p class="metric-label">Total Goals</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">✅</div>
+                            <div class="metric-content">
+                                <h3 class="metric-value" id="metricGoalsCompleted">0</h3>
+                                <p class="metric-label">Goals Completed</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">💬</div>
+                            <div class="metric-content">
+                                <h3 class="metric-value" id="metricSessions">0</h3>
+                                <p class="metric-label">Chat Sessions</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">📔</div>
+                            <div class="metric-content">
+                                <h3 class="metric-value" id="metricJournalEntries">0</h3>
+                                <p class="metric-label">Journal Entries</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Chart -->
+                    <div class="metrics-section">
+                        <h3 class="section-subtitle">Goal Completion Rate</h3>
+                        <div class="progress-chart">
+                            <div class="progress-bar-large">
+                                <div class="progress-fill-large" id="goalProgressBar" style="width: 0%"></div>
+                            </div>
+                            <p class="progress-percentage" id="goalProgressText">0%</p>
+                        </div>
+                    </div>
+
+                    <!-- AI-Generated Insights -->
+                    <div class="metrics-section">
+                        <h3 class="section-subtitle">AI Insights & Recommendations</h3>
+                        <div id="aiInsightsContainer" class="insights-container">
+                            <div class="insight-card">
+                                <span class="insight-icon">💡</span>
+                                <p class="insight-text">Complete a therapy session to receive personalized insights</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="metrics-section">
+                        <h3 class="section-subtitle">Recent Activity</h3>
+                        <div id="recentActivityContainer" class="activity-timeline">
+                            <p class="empty-state-text">No recent activity</p>
+                        </div>
+                    </div>
+
+                    <!-- Areas for Improvement -->
+                    <div class="metrics-section">
+                        <h3 class="section-subtitle">Focus Areas</h3>
+                        <div id="focusAreasContainer" class="focus-areas">
+                            <p class="empty-state-text">Your focus areas will appear here based on your therapy sessions</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Journal Screen -->
+            <section id="journalScreen" class="screen">
+                <div class="journal-container">
+                    <div class="journal-header">
+                        <h2 class="section-title">My Journal</h2>
+                        <p class="section-subtitle">Your private space for reflection</p>
+                        <button class="btn btn-primary" id="newJournalEntryBtn">
+                            <span>✍️</span> New Entry
+                        </button>
+                    </div>
+
+                    <!-- Journal Filters -->
+                    <div class="journal-filters">
+                        <select id="journalMoodFilter" class="form-select">
+                            <option value="all">All Moods</option>
+                            <option value="happy">😊 Happy</option>
+                            <option value="calm">😌 Calm</option>
+                            <option value="anxious">😰 Anxious</option>
+                            <option value="sad">😢 Sad</option>
+                            <option value="angry">😠 Angry</option>
+                            <option value="neutral">😐 Neutral</option>
+                        </select>
+                        <select id="journalSortFilter" class="form-select">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                        </select>
+                    </div>
+
+                    <!-- Journal Entries List -->
+                    <div id="journalEntriesList" class="journal-entries">
+                        <div class="empty-state">
+                            <span class="empty-icon">📔</span>
+                            <p class="empty-state-text">No journal entries yet</p>
+                            <p class="empty-state-subtext">Start writing to capture your thoughts and feelings</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Journal Entry Modal -->
+            <div id="journalEntryModal" class="modal">
+                <div class="modal-content journal-modal">
+                    <div class="modal-header">
+                        <h3 id="journalModalTitle">New Journal Entry</h3>
+                        <button class="modal-close" id="closeJournalModal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="journalEntryForm">
+                            <input type="hidden" id="journalEntryId">
+                            
+                            <div class="form-group">
+                                <label for="journalTitle">Title (Optional)</label>
+                                <input 
+                                    type="text" 
+                                    id="journalTitle" 
+                                    class="form-input"
+                                    placeholder="Give your entry a title..."
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="journalMood">How are you feeling?</label>
+                                <div class="mood-selector">
+                                    <button type="button" class="mood-btn" data-mood="happy" title="Happy">😊</button>
+                                    <button type="button" class="mood-btn" data-mood="calm" title="Calm">😌</button>
+                                    <button type="button" class="mood-btn" data-mood="anxious" title="Anxious">😰</button>
+                                    <button type="button" class="mood-btn" data-mood="sad" title="Sad">😢</button>
+                                    <button type="button" class="mood-btn" data-mood="angry" title="Angry">😠</button>
+                                    <button type="button" class="mood-btn" data-mood="neutral" title="Neutral">😐</button>
+                                </div>
+                                <input type="hidden" id="journalMood" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="journalContent">Your Thoughts</label>
+                                <textarea 
+                                    id="journalContent" 
+                                    class="form-textarea journal-textarea"
+                                    placeholder="Write your thoughts, feelings, or anything on your mind..."
+                                    rows="12"
+                                    required
+                                ></textarea>
+                                <p class="char-count"><span id="journalCharCount">0</span> characters</p>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" id="cancelJournalEntry">Cancel</button>
+                                <button type="submit" class="btn btn-primary">
+                                    <span id="saveJournalBtnText">Save Entry</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
             <!-- History Screen -->
             <section id="historyScreen" class="screen">
                 <div class="history-container">
                     <h2 class="section-title">Session History</h2>
                     <p class="section-subtitle">Review your therapy journey</p>
-                    
+
                     <div class="history-stats">
                         <div class="stat-card">
                             <span class="stat-icon">📊</span>

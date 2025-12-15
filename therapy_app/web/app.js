@@ -235,7 +235,7 @@ class AppState {
         this.goals = [];
         this.progressNotes = [];
         this.selectedModel = 'gpt-4o';
-        
+
         this.loadFromStorage();
     }
 
@@ -361,7 +361,7 @@ class UserManager {
             }
             return Math.abs(hash).toString(16);
         }
-        
+
         const encoder = new TextEncoder();
         const data = encoder.encode(password);
         const hashBuffer = await crypto.subtle.digest('SHA-256', data);
@@ -451,7 +451,7 @@ class IntakeAssessment {
 
     analyzeResponses() {
         const scores = {};
-        
+
         // Initialize scores
         Object.keys(THERAPISTS).forEach(id => {
             scores[id] = 0;
@@ -475,7 +475,7 @@ class IntakeAssessment {
         // Find highest scoring therapist
         let maxScore = 0;
         let recommendedId = 'ciabatta'; // default
-        
+
         Object.entries(scores).forEach(([id, score]) => {
             if (score > maxScore) {
                 maxScore = score;
@@ -513,7 +513,7 @@ class ChatManager {
 
     async sendMessage(userMessage) {
         if (this.isProcessing) return;
-        
+
         this.isProcessing = true;
         this.appState.addChatMessage('user', userMessage);
 
@@ -523,10 +523,10 @@ class ChatManager {
 
             // Simulate API call (replace with actual OpenAI API call)
             const response = await this.callOpenAI(userMessage);
-            
+
             this.hideTypingIndicator();
             this.appState.addChatMessage('assistant', response);
-            
+
             return response;
         } catch (error) {
             this.hideTypingIndicator();
@@ -541,13 +541,13 @@ class ChatManager {
         // TODO: Replace with actual OpenAI API call
         // For now, return intelligent simulated response based on context
         await new Promise(resolve => setTimeout(resolve, 2000));
-        
+
         const therapist = THERAPISTS[this.appState.currentTherapist];
         const messageLower = userMessage.toLowerCase();
-        
+
         // Analyze user message for context and sentiment
         const context = this.analyzeMessage(messageLower);
-        
+
         // Generate contextual response based on therapist type and user's message
         return this.generateTherapeuticResponse(therapist, userMessage, context);
     }
@@ -711,21 +711,21 @@ class ChatManager {
     showTypingIndicator() {
         const messagesContainer = document.getElementById('chatMessages');
         const therapist = THERAPISTS[this.appState.currentTherapist];
-        
+
         const typingWrapper = document.createElement('div');
         typingWrapper.id = 'typingIndicator';
         typingWrapper.className = 'message-wrapper therapist-wrapper';
-        
+
         const senderLabel = document.createElement('div');
         senderLabel.className = 'message-sender';
         senderLabel.innerHTML = `${therapist.emoji} ${therapist.name}`;
         typingWrapper.appendChild(senderLabel);
-        
+
         const typing = document.createElement('div');
         typing.className = 'message-bubble therapist-message';
         typing.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
         typingWrapper.appendChild(typing);
-        
+
         messagesContainer.appendChild(typingWrapper);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
@@ -746,7 +746,7 @@ class UIManager {
         this.userManager = userManager;
         this.chatManager = chatManager;
         this.intakeAssessment = null;
-        
+
         this.initializeEventListeners();
         this.restoreState();
     }
@@ -755,7 +755,7 @@ class UIManager {
         // Auth form listeners
         document.getElementById('loginForm')?.addEventListener('submit', (e) => this.handleLogin(e));
         document.getElementById('signupForm')?.addEventListener('submit', (e) => this.handleSignup(e));
-        
+
         // Auth tab switching
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', (e) => this.switchAuthTab(e));
@@ -764,13 +764,21 @@ class UIManager {
         // Navigation
         document.getElementById('homeBtn')?.addEventListener('click', () => this.navigateTo('therapistScreen'));
         document.getElementById('therapistsBtn')?.addEventListener('click', () => this.navigateTo('therapistScreen'));
+        document.getElementById('metricsBtn')?.addEventListener('click', () => {
+            this.navigateTo('metricsScreen');
+            this.updateMetrics();
+        });
+        document.getElementById('journalBtn')?.addEventListener('click', () => {
+            this.navigateTo('journalScreen');
+            this.renderJournalEntries();
+        });
         document.getElementById('historyBtn')?.addEventListener('click', () => this.navigateTo('historyScreen'));
         document.getElementById('profileBtn')?.addEventListener('click', () => this.navigateTo('profileScreen'));
-        
+
         // Chat
         document.getElementById('chatForm')?.addEventListener('submit', (e) => this.handleChatSubmit(e));
         document.getElementById('backBtn')?.addEventListener('click', () => this.navigateTo('therapistScreen'));
-        
+
         // Profile
         document.getElementById('logoutBtn')?.addEventListener('click', () => this.handleLogout());
         document.getElementById('addGoalBtn')?.addEventListener('click', () => this.handleAddGoal());
@@ -778,6 +786,32 @@ class UIManager {
             this.appState.selectedModel = e.target.value;
             this.appState.save();
         });
+
+        // Journal
+        document.getElementById('newJournalEntryBtn')?.addEventListener('click', () => this.openJournalModal());
+        document.getElementById('closeJournalModal')?.addEventListener('click', () => this.closeJournalModal());
+        document.getElementById('cancelJournalEntry')?.addEventListener('click', () => this.closeJournalModal());
+        document.getElementById('journalEntryForm')?.addEventListener('submit', (e) => this.handleJournalSubmit(e));
+        document.getElementById('journalMoodFilter')?.addEventListener('change', () => this.renderJournalEntries());
+        document.getElementById('journalSortFilter')?.addEventListener('change', () => this.renderJournalEntries());
+        
+        // Mood selector buttons
+        document.querySelectorAll('.mood-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                document.getElementById('journalMood').value = btn.dataset.mood;
+            });
+        });
+
+        // Character count for journal
+        const journalContent = document.getElementById('journalContent');
+        if (journalContent) {
+            journalContent.addEventListener('input', (e) => {
+                document.getElementById('journalCharCount').textContent = e.target.value.length;
+            });
+        }
 
         // Auto-resize textarea
         const chatInput = document.getElementById('chatInput');
@@ -813,11 +847,11 @@ class UIManager {
 
     switchAuthTab(e) {
         const tab = e.target.dataset.tab;
-        
+
         // Update tab buttons
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         e.target.classList.add('active');
-        
+
         // Update forms
         document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
         document.getElementById(`${tab}Form`).classList.add('active');
@@ -825,7 +859,7 @@ class UIManager {
 
     async handleLogin(e) {
         e.preventDefault();
-        
+
         const username = document.getElementById('loginUsername').value;
         const password = document.getElementById('loginPassword').value;
 
@@ -833,9 +867,9 @@ class UIManager {
             this.showLoading();
             const user = await this.userManager.login(username, password);
             this.appState.setUser(user);
-            
+
             this.showToast('Welcome back, ' + username + '! 🍞', 'success');
-            
+
             if (user.intakeCompleted) {
                 this.navigateTo('therapistScreen');
             } else {
@@ -851,7 +885,7 @@ class UIManager {
 
     async handleSignup(e) {
         e.preventDefault();
-        
+
         const username = document.getElementById('signupUsername').value;
         const password = document.getElementById('signupPassword').value;
         const confirm = document.getElementById('signupConfirm').value;
@@ -870,9 +904,9 @@ class UIManager {
             this.showLoading();
             const user = await this.userManager.register(username, password);
             this.appState.setUser(user);
-            
+
             this.showToast('Welcome to Bread Therapy, ' + username + '! 🍞', 'success');
-            
+
             // Start intake assessment
             this.navigateTo('intakeScreen');
             this.startIntakeAssessment();
@@ -892,48 +926,48 @@ class UIManager {
         const question = this.intakeAssessment.getCurrentQuestion();
         const totalQuestions = this.intakeAssessment.getTotalQuestions();
         const currentIndex = this.intakeAssessment.currentQuestionIndex;
-        
+
         // Update progress
         document.getElementById('currentQuestion').textContent = currentIndex + 1;
         document.getElementById('totalQuestions').textContent = totalQuestions;
-        
+
         const progress = ((currentIndex + 1) / totalQuestions) * 100;
         document.getElementById('intakeProgress').style.width = progress + '%';
-        
+
         // Render question
         const form = document.getElementById('intakeForm');
         form.innerHTML = '';
-        
+
         const questionDiv = document.createElement('div');
         questionDiv.className = 'intake-question';
-        
+
         const questionTitle = document.createElement('h3');
         questionTitle.className = 'question-title';
         questionTitle.textContent = question.question;
         questionDiv.appendChild(questionTitle);
-        
+
         if (question.type === 'multiple_choice') {
             const optionsDiv = document.createElement('div');
             optionsDiv.className = 'intake-options';
-            
+
             question.options.forEach((option, index) => {
                 const label = document.createElement('label');
                 label.className = 'intake-option';
-                
+
                 const radio = document.createElement('input');
                 radio.type = 'radio';
                 radio.name = question.id;
                 radio.value = index;
                 radio.checked = this.intakeAssessment.responses[question.id] === index;
-                
+
                 const text = document.createElement('span');
                 text.textContent = option.text;
-                
+
                 label.appendChild(radio);
                 label.appendChild(text);
                 optionsDiv.appendChild(label);
             });
-            
+
             questionDiv.appendChild(optionsDiv);
         } else if (question.type === 'text') {
             const textarea = document.createElement('textarea');
@@ -944,13 +978,13 @@ class UIManager {
             textarea.value = this.intakeAssessment.responses[question.id] || '';
             questionDiv.appendChild(textarea);
         }
-        
+
         form.appendChild(questionDiv);
-        
+
         // Add navigation buttons
         const buttonsDiv = document.createElement('div');
         buttonsDiv.className = 'intake-buttons';
-        
+
         if (currentIndex > 0) {
             const backBtn = document.createElement('button');
             backBtn.type = 'button';
@@ -959,14 +993,14 @@ class UIManager {
             backBtn.onclick = () => this.handleIntakePrevious();
             buttonsDiv.appendChild(backBtn);
         }
-        
+
         const nextBtn = document.createElement('button');
         nextBtn.type = 'button';
         nextBtn.className = 'btn btn-primary';
         nextBtn.textContent = currentIndex === totalQuestions - 1 ? 'Complete Assessment' : 'Next →';
         nextBtn.onclick = () => this.handleIntakeNext();
         buttonsDiv.appendChild(nextBtn);
-        
+
         form.appendChild(buttonsDiv);
     }
 
@@ -978,7 +1012,7 @@ class UIManager {
 
     handleIntakeNext() {
         const question = this.intakeAssessment.getCurrentQuestion();
-        
+
         // Validate and save response
         if (question.type === 'multiple_choice') {
             const selected = document.querySelector(`input[name="${question.id}"]:checked`);
@@ -995,7 +1029,7 @@ class UIManager {
             }
             this.intakeAssessment.saveResponse(question.id, value);
         }
-        
+
         // Move to next question or complete
         if (this.intakeAssessment.nextQuestion()) {
             this.renderIntakeQuestion();
@@ -1008,16 +1042,16 @@ class UIManager {
         const results = this.intakeAssessment.analyzeResponses();
         this.appState.recommendedTherapist = results.recommended;
         this.appState.intakeResponses = this.intakeAssessment.responses;
-        
+
         // Mark intake as complete
         this.userManager.completeIntake(this.appState.user.username);
         this.appState.user.intakeCompleted = true;
         this.appState.save();
-        
+
         // Show therapist selection with recommendation
         this.navigateTo('therapistScreen');
         this.renderTherapistSelection(results.recommended);
-        
+
         const therapist = THERAPISTS[results.recommended];
         this.showToast(`We recommend ${therapist.name} for you! 🎯`, 'success');
     }
@@ -1025,22 +1059,22 @@ class UIManager {
     renderTherapistSelection(recommendedId = null) {
         const grid = document.getElementById('therapistGrid');
         grid.innerHTML = '';
-        
+
         // Show recommended therapist if exists
         if (recommendedId) {
             const recommendedSection = document.getElementById('recommendedSection');
             const recommendedCard = document.getElementById('recommendedCard');
             recommendedSection.style.display = 'block';
-            
+
             const therapist = THERAPISTS[recommendedId];
             recommendedCard.innerHTML = this.createTherapistCardHTML(therapist, true);
-            
+
             // Add click handler
             recommendedCard.querySelector('.therapist-card').addEventListener('click', () => {
                 this.selectTherapist(therapist.id);
             });
         }
-        
+
         // Render all therapists
         Object.values(THERAPISTS).forEach(therapist => {
             const card = document.createElement('div');
@@ -1067,23 +1101,23 @@ class UIManager {
     selectTherapist(therapistId) {
         this.appState.setTherapist(therapistId);
         const therapist = THERAPISTS[therapistId];
-        
+
         // Update chat screen header
         document.getElementById('chatTherapistEmoji').textContent = therapist.emoji;
         document.getElementById('chatTherapistName').textContent = therapist.name;
         document.getElementById('chatTherapistApproach').textContent = therapist.approach;
-        
+
         // Clear chat and navigate
         this.navigateTo('chatScreen');
         this.renderChatHistory();
-        
+
         this.showToast(`Starting session with ${therapist.name}`, 'success');
     }
 
     renderChatHistory() {
         const container = document.getElementById('chatMessages');
         container.innerHTML = '';
-        
+
         if (this.appState.chatHistory.length === 0) {
             const welcome = document.createElement('div');
             welcome.className = 'welcome-message';
@@ -1098,26 +1132,26 @@ class UIManager {
                 this.addMessageToChat(msg.role, msg.content, false);
             });
         }
-        
+
         container.scrollTop = container.scrollHeight;
     }
 
     addMessageToChat(role, content, animate = true) {
         const container = document.getElementById('chatMessages');
-        
+
         // Remove welcome message if exists
         const welcome = container.querySelector('.welcome-message');
         if (welcome) welcome.remove();
-        
+
         // Create message wrapper
         const messageWrapper = document.createElement('div');
         messageWrapper.className = `message-wrapper ${role === 'user' ? 'user-wrapper' : 'therapist-wrapper'}`;
-        
+
         if (animate) {
             messageWrapper.style.opacity = '0';
             messageWrapper.style.transform = 'translateY(10px)';
         }
-        
+
         // Add sender label
         const senderLabel = document.createElement('div');
         senderLabel.className = 'message-sender';
@@ -1128,57 +1162,57 @@ class UIManager {
             senderLabel.innerHTML = `${therapist.emoji} ${therapist.name}`;
         }
         messageWrapper.appendChild(senderLabel);
-        
+
         // Create message bubble
         const messageDiv = document.createElement('div');
         messageDiv.className = `message-bubble ${role === 'user' ? 'user-message' : 'therapist-message'}`;
-        
+
         const contentDiv = document.createElement('div');
         contentDiv.className = 'message-content';
         contentDiv.textContent = content;
-        
+
         const timeDiv = document.createElement('div');
         timeDiv.className = 'message-time';
         timeDiv.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        
+
         messageDiv.appendChild(contentDiv);
         messageDiv.appendChild(timeDiv);
         messageWrapper.appendChild(messageDiv);
-        
+
         container.appendChild(messageWrapper);
-        
+
         if (animate) {
             setTimeout(() => {
                 messageWrapper.style.opacity = '1';
                 messageWrapper.style.transform = 'translateY(0)';
             }, 10);
         }
-        
+
         container.scrollTop = container.scrollHeight;
     }
 
     async handleChatSubmit(e) {
         e.preventDefault();
-        
+
         const input = document.getElementById('chatInput');
         const message = input.value.trim();
-        
+
         if (!message) return;
-        
+
         // Clear input
         input.value = '';
         input.style.height = 'auto';
-        
+
         // Add user message to chat
         this.addMessageToChat('user', message);
-        
+
         try {
             // Send to therapist (OpenAI)
             const response = await this.chatManager.sendMessage(message);
-            
+
             // Add therapist response
             this.addMessageToChat('assistant', response);
-            
+
             // Auto-save every 4 messages
             if (this.appState.chatHistory.length % 4 === 0) {
                 this.appState.saveSession();
@@ -1193,7 +1227,7 @@ class UIManager {
         if (confirm('Save current session before logging out?')) {
             this.appState.saveSession();
         }
-        
+
         this.appState.logout();
         this.navigateTo('authScreen');
         this.showToast('Logged out successfully', 'info');
@@ -1213,10 +1247,10 @@ class UIManager {
         document.getElementById('profileUsername').textContent = this.appState.user.username;
         const memberDate = new Date(this.appState.user.createdAt);
         document.getElementById('memberSince').textContent = memberDate.toLocaleDateString();
-        
+
         // Update model selection
         document.getElementById('modelSelect').value = this.appState.selectedModel;
-        
+
         // Render goals
         const goalsContainer = document.getElementById('goalsContainer');
         if (this.appState.goals.length === 0) {
@@ -1224,13 +1258,13 @@ class UIManager {
         } else {
             goalsContainer.innerHTML = this.appState.goals.map(goal => `
                 <div class="goal-item">
-                    <input type="checkbox" ${goal.completed ? 'checked' : ''} 
+                    <input type="checkbox" ${goal.completed ? 'checked' : ''}
                            onchange="app.toggleGoal(${goal.id})">
                     <span class="${goal.completed ? 'completed' : ''}">${goal.text}</span>
                 </div>
             `).join('');
         }
-        
+
         // Render progress notes
         const notesContainer = document.getElementById('notesContainer');
         if (this.appState.progressNotes.length === 0) {
@@ -1250,7 +1284,7 @@ class UIManager {
         document.getElementById('totalSessions').textContent = this.appState.sessions.length;
         document.getElementById('goalsSet').textContent = this.appState.goals.length;
         document.getElementById('progressNotes').textContent = this.appState.progressNotes.length;
-        
+
         // Render session list
         const historyList = document.getElementById('historyList');
         if (this.appState.sessions.length === 0) {
@@ -1291,42 +1325,48 @@ class UIManager {
         document.querySelectorAll('.screen').forEach(screen => {
             screen.classList.remove('active');
         });
-        
+
         // Show target screen
         document.getElementById(screenId).classList.add('active');
-        
+
         // Update nav buttons
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.classList.remove('active');
         });
-        
+
         // Show/hide header based on screen
         const header = document.querySelector('.app-header');
         if (screenId === 'authScreen' || screenId === 'intakeScreen') {
             header.style.display = 'none';
         } else {
             header.style.display = 'block';
-            
+
             // Update active nav button
             const navMap = {
                 'therapistScreen': 'homeBtn',
                 'chatScreen': 'therapistsBtn',
+                'metricsScreen': 'metricsBtn',
+                'journalScreen': 'journalBtn',
                 'historyScreen': 'historyBtn',
                 'profileScreen': 'profileBtn'
             };
             const activeBtn = document.getElementById(navMap[screenId]);
             if (activeBtn) activeBtn.classList.add('active');
         }
-        
+
         // Render screen content
         if (screenId === 'therapistScreen') {
             this.renderTherapistSelection(this.appState.recommendedTherapist);
+        } else if (screenId === 'metricsScreen') {
+            this.updateMetrics();
+        } else if (screenId === 'journalScreen') {
+            this.renderJournalEntries();
         } else if (screenId === 'historyScreen') {
             this.renderHistory();
         } else if (screenId === 'profileScreen') {
             this.renderProfile();
         }
-        
+
         this.appState.currentScreen = screenId;
         this.appState.save();
     }
@@ -1335,19 +1375,19 @@ class UIManager {
         const container = document.getElementById('toastContainer');
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
-        
+
         const icon = {
             success: '✓',
             error: '✕',
             warning: '⚠',
             info: 'ℹ'
         }[type] || 'ℹ';
-        
+
         toast.innerHTML = `<span class="toast-icon">${icon}</span><span>${message}</span>`;
         container.appendChild(toast);
-        
+
         setTimeout(() => toast.classList.add('show'), 10);
-        
+
         setTimeout(() => {
             toast.classList.remove('show');
             setTimeout(() => toast.remove(), 300);
@@ -1360,6 +1400,446 @@ class UIManager {
 
     hideLoading() {
         document.getElementById('loadingOverlay').classList.remove('active');
+    }
+
+    // ========================================================================
+    // METRICS DASHBOARD METHODS
+    // ========================================================================
+
+    updateMetrics() {
+        const goals = this.appState.goals || [];
+        const sessions = this.appState.sessions || [];
+        const journalEntries = this.getJournalEntries();
+        const completedGoals = goals.filter(g => g.completed).length;
+
+        // Update metric cards
+        document.getElementById('metricGoalsTotal').textContent = goals.length;
+        document.getElementById('metricGoalsCompleted').textContent = completedGoals;
+        document.getElementById('metricSessions').textContent = sessions.length;
+        document.getElementById('metricJournalEntries').textContent = journalEntries.length;
+
+        // Update goal completion rate
+        const completionRate = goals.length > 0 ? Math.round((completedGoals / goals.length) * 100) : 0;
+        document.getElementById('goalProgressBar').style.width = completionRate + '%';
+        document.getElementById('goalProgressText').textContent = completionRate + '%';
+
+        // Generate AI insights
+        this.generateAIInsights();
+
+        // Render recent activity
+        this.renderRecentActivity();
+
+        // Render focus areas
+        this.renderFocusAreas();
+    }
+
+    async generateAIInsights() {
+        const container = document.getElementById('aiInsightsContainer');
+        const goals = this.appState.goals || [];
+        const sessions = this.appState.sessions || [];
+        const journalEntries = this.getJournalEntries();
+
+        const insights = [];
+
+        // Goal-based insights
+        const completedGoals = goals.filter(g => g.completed).length;
+        const incompleteGoals = goals.filter(g => !g.completed);
+
+        if (completedGoals > 0) {
+            insights.push({
+                icon: '🎉',
+                text: `Congratulations! You've completed ${completedGoals} ${completedGoals === 1 ? 'goal' : 'goals'}. Keep up the great work!`
+            });
+        }
+
+        if (incompleteGoals.length > 0) {
+            insights.push({
+                icon: '🎯',
+                text: `You have ${incompleteGoals.length} active ${incompleteGoals.length === 1 ? 'goal' : 'goals'}. Consider breaking them into smaller, manageable steps.`
+            });
+        }
+
+        // Session-based insights
+        if (sessions.length === 0) {
+            insights.push({
+                icon: '💬',
+                text: 'Start your first therapy session to begin your journey towards better mental health.'
+            });
+        } else if (sessions.length >= 5) {
+            insights.push({
+                icon: '⭐',
+                text: `You've completed ${sessions.length} sessions! Regular engagement is key to making lasting progress.`
+            });
+        }
+
+        // Journal-based insights
+        if (journalEntries.length === 0) {
+            insights.push({
+                icon: '📔',
+                text: 'Start journaling to track your thoughts and emotions. Regular reflection can enhance self-awareness.'
+            });
+        } else {
+            const recentEntries = journalEntries.slice(0, 7);
+            const moods = recentEntries.map(e => e.mood);
+            const happyCount = moods.filter(m => m === 'happy' || m === 'calm').length;
+            const sadCount = moods.filter(m => m === 'sad' || m === 'anxious' || m === 'angry').length;
+
+            if (happyCount > sadCount) {
+                insights.push({
+                    icon: '😊',
+                    text: 'Your recent journal entries show positive emotional patterns. Keep nurturing what makes you feel good!'
+                });
+            } else if (sadCount > happyCount) {
+                insights.push({
+                    icon: '💙',
+                    text: 'Your recent entries suggest you\'re going through a challenging time. Consider reaching out to your therapist.'
+                });
+            }
+        }
+
+        // Engagement insights
+        const daysSinceLastSession = sessions.length > 0 
+            ? Math.floor((Date.now() - new Date(sessions[sessions.length - 1].date).getTime()) / (1000 * 60 * 60 * 24))
+            : null;
+
+        if (daysSinceLastSession !== null && daysSinceLastSession > 7) {
+            insights.push({
+                icon: '⏰',
+                text: `It's been ${daysSinceLastSession} days since your last session. Regular check-ins can help maintain progress.`
+            });
+        }
+
+        // Render insights
+        if (insights.length === 0) {
+            insights.push({
+                icon: '💡',
+                text: 'Keep engaging with the app to receive personalized insights about your mental health journey.'
+            });
+        }
+
+        container.innerHTML = insights.map(insight => `
+            <div class="insight-card">
+                <span class="insight-icon">${insight.icon}</span>
+                <p class="insight-text">${insight.text}</p>
+            </div>
+        `).join('');
+    }
+
+    renderRecentActivity() {
+        const container = document.getElementById('recentActivityContainer');
+        const activities = [];
+
+        // Gather recent activities
+        const goals = (this.appState.goals || []).map(g => ({
+            type: 'goal',
+            date: g.createdAt || Date.now(),
+            text: g.completed ? `Completed goal: ${g.text}` : `Created goal: ${g.text}`,
+            icon: g.completed ? '✅' : '🎯'
+        }));
+
+        const sessions = (this.appState.sessions || []).map(s => ({
+            type: 'session',
+            date: s.date,
+            text: `Had a session with ${THERAPISTS[s.therapist].name}`,
+            icon: '💬'
+        }));
+
+        const journalEntries = this.getJournalEntries().map(e => ({
+            type: 'journal',
+            date: e.date,
+            text: e.title ? `Journaled: ${e.title}` : 'Added journal entry',
+            icon: '📔'
+        }));
+
+        activities.push(...goals, ...sessions, ...journalEntries);
+        activities.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        const recentActivities = activities.slice(0, 10);
+
+        if (recentActivities.length === 0) {
+            container.innerHTML = '<p class="empty-state-text">No recent activity</p>';
+        } else {
+            container.innerHTML = recentActivities.map(activity => {
+                const date = new Date(activity.date);
+                const timeAgo = this.getTimeAgo(date);
+
+                return `
+                    <div class="activity-item">
+                        <div class="activity-icon">${activity.icon}</div>
+                        <div class="activity-content">
+                            <p class="activity-title">${activity.text}</p>
+                            <p class="activity-time">${timeAgo}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    }
+
+    renderFocusAreas() {
+        const container = document.getElementById('focusAreasContainer');
+        const sessions = this.appState.sessions || [];
+        const goals = this.appState.goals || [];
+
+        const focusAreas = new Set();
+
+        // Extract focus areas from therapist types
+        sessions.forEach(session => {
+            const therapist = THERAPISTS[session.therapist];
+            if (therapist && therapist.approach) {
+                focusAreas.add(therapist.approach);
+            }
+        });
+
+        // Add some common focus areas based on goals
+        const goalTexts = goals.map(g => g.text.toLowerCase()).join(' ');
+        if (goalTexts.includes('anxiety') || goalTexts.includes('stress')) {
+            focusAreas.add('Anxiety Management');
+        }
+        if (goalTexts.includes('relationship') || goalTexts.includes('communication')) {
+            focusAreas.add('Relationships');
+        }
+        if (goalTexts.includes('depression') || goalTexts.includes('mood')) {
+            focusAreas.add('Mood');
+        }
+        if (goalTexts.includes('confidence') || goalTexts.includes('self-esteem')) {
+            focusAreas.add('Self-Esteem');
+        }
+
+        if (focusAreas.size === 0) {
+            container.innerHTML = '<p class="empty-state-text">Your focus areas will appear here based on your therapy sessions</p>';
+        } else {
+            container.innerHTML = Array.from(focusAreas).map(area => `
+                <span class="focus-tag">${area}</span>
+            `).join('');
+        }
+    }
+
+    getTimeAgo(date) {
+        const seconds = Math.floor((Date.now() - date) / 1000);
+        const intervals = {
+            year: 31536000,
+            month: 2592000,
+            week: 604800,
+            day: 86400,
+            hour: 3600,
+            minute: 60
+        };
+
+        for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+            const interval = Math.floor(seconds / secondsInUnit);
+            if (interval >= 1) {
+                return `${interval} ${unit}${interval > 1 ? 's' : ''} ago`;
+            }
+        }
+        return 'Just now';
+    }
+
+    // ========================================================================
+    // JOURNAL METHODS
+    // ========================================================================
+
+    getJournalEntries() {
+        const username = this.appState.user?.username;
+        if (!username) return [];
+
+        const key = `journal_${username}`;
+        const entries = localStorage.getItem(key);
+        return entries ? JSON.parse(entries) : [];
+    }
+
+    saveJournalEntries(entries) {
+        const username = this.appState.user?.username;
+        if (!username) return;
+
+        const key = `journal_${username}`;
+        localStorage.setItem(key, JSON.stringify(entries));
+    }
+
+    openJournalModal(entry = null) {
+        const modal = document.getElementById('journalEntryModal');
+        const form = document.getElementById('journalEntryForm');
+        const title = document.getElementById('journalModalTitle');
+        
+        form.reset();
+        document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
+        document.getElementById('journalCharCount').textContent = '0';
+
+        if (entry) {
+            // Editing existing entry
+            title.textContent = 'Edit Journal Entry';
+            document.getElementById('journalEntryId').value = entry.id;
+            document.getElementById('journalTitle').value = entry.title || '';
+            document.getElementById('journalContent').value = entry.content;
+            document.getElementById('journalMood').value = entry.mood;
+            document.getElementById('journalCharCount').textContent = entry.content.length;
+            
+            const moodBtn = document.querySelector(`[data-mood="${entry.mood}"]`);
+            if (moodBtn) moodBtn.classList.add('selected');
+        } else {
+            // New entry
+            title.textContent = 'New Journal Entry';
+            document.getElementById('journalEntryId').value = '';
+        }
+
+        modal.classList.add('active');
+    }
+
+    closeJournalModal() {
+        document.getElementById('journalEntryModal').classList.remove('active');
+    }
+
+    async handleJournalSubmit(e) {
+        e.preventDefault();
+
+        const id = document.getElementById('journalEntryId').value;
+        const title = document.getElementById('journalTitle').value.trim();
+        const content = document.getElementById('journalContent').value.trim();
+        const mood = document.getElementById('journalMood').value;
+
+        if (!mood) {
+            this.showToast('Please select your mood', 'warning');
+            return;
+        }
+
+        if (!content) {
+            this.showToast('Please write something in your journal', 'warning');
+            return;
+        }
+
+        const entries = this.getJournalEntries();
+
+        if (id) {
+            // Update existing entry
+            const index = entries.findIndex(e => e.id === parseInt(id));
+            if (index !== -1) {
+                entries[index] = {
+                    ...entries[index],
+                    title,
+                    content,
+                    mood,
+                    updatedAt: Date.now()
+                };
+                this.showToast('Journal entry updated! 📝', 'success');
+            }
+        } else {
+            // Create new entry
+            entries.push({
+                id: Date.now(),
+                title,
+                content,
+                mood,
+                date: Date.now(),
+                createdAt: Date.now()
+            });
+            this.showToast('Journal entry saved! 📔', 'success');
+        }
+
+        this.saveJournalEntries(entries);
+        this.closeJournalModal();
+        this.renderJournalEntries();
+    }
+
+    renderJournalEntries() {
+        const container = document.getElementById('journalEntriesList');
+        const moodFilter = document.getElementById('journalMoodFilter').value;
+        const sortFilter = document.getElementById('journalSortFilter').value;
+
+        let entries = this.getJournalEntries();
+
+        // Apply mood filter
+        if (moodFilter !== 'all') {
+            entries = entries.filter(e => e.mood === moodFilter);
+        }
+
+        // Apply sort
+        if (sortFilter === 'newest') {
+            entries.sort((a, b) => b.date - a.date);
+        } else {
+            entries.sort((a, b) => a.date - b.date);
+        }
+
+        if (entries.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <span class="empty-icon">📔</span>
+                    <p class="empty-state-text">No journal entries yet</p>
+                    <p class="empty-state-subtext">Start writing to capture your thoughts and feelings</p>
+                </div>
+            `;
+        } else {
+            container.innerHTML = entries.map(entry => {
+                const date = new Date(entry.date);
+                const moodEmoji = this.getMoodEmoji(entry.mood);
+                const preview = entry.content.substring(0, 150) + (entry.content.length > 150 ? '...' : '');
+
+                return `
+                    <div class="journal-entry-card" onclick="app.viewJournalEntry(${entry.id})">
+                        <div class="journal-entry-header">
+                            <span class="journal-entry-mood">${moodEmoji}</span>
+                            <span class="journal-entry-date">${date.toLocaleDateString()}</span>
+                        </div>
+                        ${entry.title ? `<h3 class="journal-entry-title">${this.escapeHtml(entry.title)}</h3>` : ''}
+                        <p class="journal-entry-preview">${this.escapeHtml(preview)}</p>
+                        <div class="journal-entry-actions">
+                            <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); app.editJournalEntry(${entry.id})">
+                                Edit
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); app.deleteJournalEntry(${entry.id})">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    }
+
+    getMoodEmoji(mood) {
+        const moods = {
+            happy: '😊',
+            calm: '😌',
+            anxious: '😰',
+            sad: '😢',
+            angry: '😠',
+            neutral: '😐'
+        };
+        return moods[mood] || '😐';
+    }
+
+    viewJournalEntry(id) {
+        const entries = this.getJournalEntries();
+        const entry = entries.find(e => e.id === id);
+        if (entry) {
+            // For now, just edit it. You could create a separate view modal if desired
+            this.openJournalModal(entry);
+        }
+    }
+
+    editJournalEntry(id) {
+        const entries = this.getJournalEntries();
+        const entry = entries.find(e => e.id === id);
+        if (entry) {
+            this.openJournalModal(entry);
+        }
+    }
+
+    deleteJournalEntry(id) {
+        if (!confirm('Are you sure you want to delete this journal entry? This action cannot be undone.')) {
+            return;
+        }
+
+        const entries = this.getJournalEntries();
+        const filtered = entries.filter(e => e.id !== id);
+        this.saveJournalEntries(filtered);
+        this.renderJournalEntries();
+        this.showToast('Journal entry deleted', 'info');
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 }
 
@@ -1374,18 +1854,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const userManager = new UserManager();
     const chatManager = new ChatManager(appState);
     const uiManager = new UIManager(appState, userManager, chatManager);
-    
+
     // Make app globally accessible for inline handlers
     window.app = uiManager;
-    
+
     // Check online/offline status
     window.addEventListener('online', () => {
         document.getElementById('offlineIndicator').classList.remove('active');
     });
-    
+
     window.addEventListener('offline', () => {
         document.getElementById('offlineIndicator').classList.add('active');
     });
-    
+
     console.log('🍞 Bread Therapist Collective PWA initialized');
 });

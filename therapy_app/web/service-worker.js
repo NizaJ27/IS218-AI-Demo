@@ -18,7 +18,7 @@ const STATIC_ASSETS = [
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
     console.log('[Service Worker] Installing...', CACHE_VERSION);
-    
+
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then((cache) => {
@@ -38,7 +38,7 @@ self.addEventListener('install', (event) => {
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
     console.log('[Service Worker] Activating...', CACHE_VERSION);
-    
+
     event.waitUntil(
         caches.keys()
             .then((cacheNames) => {
@@ -62,12 +62,12 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     const { request } = event;
     const url = new URL(request.url);
-    
+
     // Skip cross-origin requests
     if (url.origin !== location.origin && !url.origin.includes('api.openai.com')) {
         return;
     }
-    
+
     // Network-first strategy for API calls
     if (url.pathname.startsWith('/api/') || url.origin.includes('api.openai.com')) {
         event.respondWith(
@@ -75,14 +75,14 @@ self.addEventListener('fetch', (event) => {
                 .then((response) => {
                     // Clone response for cache
                     const responseClone = response.clone();
-                    
+
                     // Cache successful responses
                     if (response.status === 200) {
                         caches.open(CACHE_NAME).then((cache) => {
                             cache.put(request, responseClone);
                         });
                     }
-                    
+
                     return response;
                 })
                 .catch(() => {
@@ -94,9 +94,9 @@ self.addEventListener('fetch', (event) => {
                             }
                             // Return offline fallback
                             return new Response(
-                                JSON.stringify({ 
-                                    error: 'Offline', 
-                                    message: 'You are currently offline. Please check your connection.' 
+                                JSON.stringify({
+                                    error: 'Offline',
+                                    message: 'You are currently offline. Please check your connection.'
                                 }),
                                 {
                                     status: 503,
@@ -108,7 +108,7 @@ self.addEventListener('fetch', (event) => {
         );
         return;
     }
-    
+
     // Cache-first strategy for static assets
     event.respondWith(
         caches.match(request)
@@ -116,20 +116,20 @@ self.addEventListener('fetch', (event) => {
                 if (cachedResponse) {
                     return cachedResponse;
                 }
-                
+
                 // Fetch from network and cache
                 return fetch(request).then((response) => {
                     // Don't cache non-successful responses
                     if (!response || response.status !== 200 || response.type === 'error') {
                         return response;
                     }
-                    
+
                     const responseClone = response.clone();
-                    
+
                     caches.open(CACHE_NAME).then((cache) => {
                         cache.put(request, responseClone);
                     });
-                    
+
                     return response;
                 });
             })
@@ -146,7 +146,7 @@ self.addEventListener('fetch', (event) => {
 // Background sync for queued messages (when connection restored)
 self.addEventListener('sync', (event) => {
     console.log('[Service Worker] Background sync triggered:', event.tag);
-    
+
     if (event.tag === 'sync-messages') {
         event.waitUntil(syncQueuedMessages());
     }
@@ -155,7 +155,7 @@ self.addEventListener('sync', (event) => {
 // Push notification support (for future feature)
 self.addEventListener('push', (event) => {
     console.log('[Service Worker] Push notification received');
-    
+
     const options = {
         body: event.data ? event.data.text() : 'New notification',
         icon: '/assets/icon-192.png',
@@ -178,7 +178,7 @@ self.addEventListener('push', (event) => {
             }
         ]
     };
-    
+
     event.waitUntil(
         self.registration.showNotification('Bread Therapy', options)
     );
@@ -187,9 +187,9 @@ self.addEventListener('push', (event) => {
 // Notification click handler
 self.addEventListener('notificationclick', (event) => {
     console.log('[Service Worker] Notification clicked:', event.action);
-    
+
     event.notification.close();
-    
+
     if (event.action === 'open') {
         event.waitUntil(
             clients.openWindow('/')
@@ -203,7 +203,7 @@ async function syncQueuedMessages() {
         // Get queued messages from IndexedDB
         const db = await openDatabase();
         const messages = await getQueuedMessages(db);
-        
+
         // Send each message
         for (const message of messages) {
             try {
@@ -214,7 +214,7 @@ async function syncQueuedMessages() {
                 console.error('[Service Worker] Failed to sync message:', error);
             }
         }
-        
+
         // Notify client that sync is complete
         const clients = await self.clients.matchAll();
         clients.forEach((client) => {
@@ -223,7 +223,7 @@ async function syncQueuedMessages() {
                 count: messages.length
             });
         });
-        
+
     } catch (error) {
         console.error('[Service Worker] Sync failed:', error);
     }
@@ -233,10 +233,10 @@ async function syncQueuedMessages() {
 function openDatabase() {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open('bread-therapy-db', 1);
-        
+
         request.onerror = () => reject(request.error);
         request.onsuccess = () => resolve(request.result);
-        
+
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
             if (!db.objectStoreNames.contains('messages')) {
@@ -252,7 +252,7 @@ function getQueuedMessages(db) {
         const transaction = db.transaction(['messages'], 'readonly');
         const store = transaction.objectStore('messages');
         const request = store.getAll();
-        
+
         request.onerror = () => reject(request.error);
         request.onsuccess = () => resolve(request.result);
     });
@@ -264,7 +264,7 @@ function removeQueuedMessage(db, id) {
         const transaction = db.transaction(['messages'], 'readwrite');
         const store = transaction.objectStore('messages');
         const request = store.delete(id);
-        
+
         request.onerror = () => reject(request.error);
         request.onsuccess = () => resolve();
     });
@@ -279,22 +279,22 @@ async function sendMessage(message) {
         },
         body: JSON.stringify(message)
     });
-    
+
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     return response.json();
 }
 
 // Listen for messages from clients
 self.addEventListener('message', (event) => {
     console.log('[Service Worker] Message received:', event.data);
-    
+
     if (event.data.type === 'SKIP_WAITING') {
         self.skipWaiting();
     }
-    
+
     if (event.data.type === 'CACHE_URLS') {
         event.waitUntil(
             caches.open(CACHE_NAME)
