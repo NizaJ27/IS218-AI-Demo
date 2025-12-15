@@ -752,6 +752,9 @@ class UIManager {
     }
 
     initializeEventListeners() {
+        // Landing page
+        document.getElementById('getStartedBtn')?.addEventListener('click', () => this.navigateTo('authScreen'));
+
         // Auth form listeners
         document.getElementById('loginForm')?.addEventListener('submit', (e) => this.handleLogin(e));
         document.getElementById('signupForm')?.addEventListener('submit', (e) => this.handleSignup(e));
@@ -1336,7 +1339,7 @@ class UIManager {
 
         // Show/hide header based on screen
         const header = document.querySelector('.app-header');
-        if (screenId === 'authScreen' || screenId === 'intakeScreen') {
+        if (screenId === 'landingScreen' || screenId === 'authScreen' || screenId === 'intakeScreen') {
             header.style.display = 'none';
         } else {
             header.style.display = 'block';
@@ -1857,6 +1860,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Make app globally accessible for inline handlers
     window.app = uiManager;
+
+    // Check if user is logged in and show appropriate screen
+    if (appState.user) {
+        // User is logged in, show therapist screen
+        uiManager.navigateTo('therapistScreen');
+    } else {
+        // User not logged in, show landing page
+        uiManager.navigateTo('landingScreen');
+    }
 
     // Check online/offline status
     window.addEventListener('online', () => {

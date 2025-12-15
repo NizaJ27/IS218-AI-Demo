@@ -67,8 +67,87 @@
         <!-- Main Content Area -->
         <main class="app-main" role="main">
 
+            <!-- Landing Page -->
+            <section id="landingScreen" class="screen active">
+                <div class="landing-container">
+                    <div class="landing-hero">
+                        <div class="hero-icon">🍞</div>
+                        <h1 class="hero-title">The Bread Therapist Collective</h1>
+                        <p class="hero-subtitle">Your Personal AI-Powered Mental Health Companion</p>
+                    </div>
+
+                    <div class="landing-content">
+                        <div class="feature-grid">
+                            <div class="feature-card">
+                                <div class="feature-icon">🤖</div>
+                                <h3 class="feature-title">AI-Powered Therapy</h3>
+                                <p class="feature-description">Connect with specialized AI therapists trained in various therapeutic approaches including CBT, mindfulness, and more.</p>
+                            </div>
+
+                            <div class="feature-card">
+                                <div class="feature-icon">📊</div>
+                                <h3 class="feature-title">Track Your Progress</h3>
+                                <p class="feature-description">Monitor your mental health journey with comprehensive metrics, goal tracking, and AI-generated insights.</p>
+                            </div>
+
+                            <div class="feature-card">
+                                <div class="feature-icon">📔</div>
+                                <h3 class="feature-title">Private Journaling</h3>
+                                <p class="feature-description">Keep a secure, personal journal with mood tracking to reflect on your thoughts and emotions.</p>
+                            </div>
+
+                            <div class="feature-card">
+                                <div class="feature-icon">🔒</div>
+                                <h3 class="feature-title">Private & Secure</h3>
+                                <p class="feature-description">Your data stays private. All conversations and journal entries are stored locally on your device.</p>
+                            </div>
+
+                            <div class="feature-card">
+                                <div class="feature-icon">⚡</div>
+                                <h3 class="feature-title">Available Anytime</h3>
+                                <p class="feature-description">Access support whenever you need it, 24/7. No appointments necessary.</p>
+                            </div>
+
+                            <div class="feature-card">
+                                <div class="feature-icon">🎯</div>
+                                <h3 class="feature-title">Personalized Matching</h3>
+                                <p class="feature-description">Complete an intake assessment to find the therapist approach that best fits your needs.</p>
+                            </div>
+                        </div>
+
+                        <div class="landing-cta">
+                            <button id="getStartedBtn" class="btn btn-primary btn-hero">Get Started</button>
+                            <p class="cta-note">Free to use • No credit card required</p>
+                        </div>
+
+                        <div class="landing-info">
+                            <h3 class="info-title">How It Works</h3>
+                            <div class="steps-container">
+                                <div class="step">
+                                    <div class="step-number">1</div>
+                                    <h4 class="step-title">Create Your Account</h4>
+                                    <p class="step-description">Sign up in seconds with just a username and password.</p>
+                                </div>
+                                <div class="step-arrow">→</div>
+                                <div class="step">
+                                    <div class="step-number">2</div>
+                                    <h4 class="step-title">Take Assessment</h4>
+                                    <p class="step-description">Answer a few questions to match with the right therapist.</p>
+                                </div>
+                                <div class="step-arrow">→</div>
+                                <div class="step">
+                                    <div class="step-number">3</div>
+                                    <h4 class="step-title">Start Your Journey</h4>
+                                    <p class="step-description">Begin chatting, set goals, and track your progress.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Auth Screen -->
-            <section id="authScreen" class="screen active">
+            <section id="authScreen" class="screen">
                 <div class="auth-container">
                     <div class="auth-card">
                         <div class="auth-header">
@@ -355,63 +434,6 @@
                 </div>
             </section>
 
-            <!-- Journal Entry Modal -->
-            <div id="journalEntryModal" class="modal">
-                <div class="modal-content journal-modal">
-                    <div class="modal-header">
-                        <h3 id="journalModalTitle">New Journal Entry</h3>
-                        <button class="modal-close" id="closeJournalModal">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="journalEntryForm">
-                            <input type="hidden" id="journalEntryId">
-                            
-                            <div class="form-group">
-                                <label for="journalTitle">Title (Optional)</label>
-                                <input 
-                                    type="text" 
-                                    id="journalTitle" 
-                                    class="form-input"
-                                    placeholder="Give your entry a title..."
-                                >
-                            </div>
-
-                            <div class="form-group">
-                                <label for="journalMood">How are you feeling?</label>
-                                <div class="mood-selector">
-                                    <button type="button" class="mood-btn" data-mood="happy" title="Happy">😊</button>
-                                    <button type="button" class="mood-btn" data-mood="calm" title="Calm">😌</button>
-                                    <button type="button" class="mood-btn" data-mood="anxious" title="Anxious">😰</button>
-                                    <button type="button" class="mood-btn" data-mood="sad" title="Sad">😢</button>
-                                    <button type="button" class="mood-btn" data-mood="angry" title="Angry">😠</button>
-                                    <button type="button" class="mood-btn" data-mood="neutral" title="Neutral">😐</button>
-                                </div>
-                                <input type="hidden" id="journalMood" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="journalContent">Your Thoughts</label>
-                                <textarea 
-                                    id="journalContent" 
-                                    class="form-textarea journal-textarea"
-                                    placeholder="Write your thoughts, feelings, or anything on your mind..."
-                                    rows="12"
-                                    required
-                                ></textarea>
-                                <p class="char-count"><span id="journalCharCount">0</span> characters</p>
-                            </div>
-
-                            <div class="form-actions">
-                                <button type="button" class="btn btn-secondary" id="cancelJournalEntry">Cancel</button>
-                                <button type="submit" class="btn btn-primary">
-                                    <span id="saveJournalBtnText">Save Entry</span>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
             <!-- History Screen -->
             <section id="historyScreen" class="screen">
                 <div class="history-container">
@@ -490,9 +512,66 @@
                 </div>
             </section>
 
+            <!-- Journal Entry Modal -->
+            <div id="journalEntryModal" class="modal">
+                <div class="modal-content journal-modal">
+                    <div class="modal-header">
+                        <h3 id="journalModalTitle">New Journal Entry</h3>
+                        <button class="modal-close" id="closeJournalModal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="journalEntryForm">
+                            <input type="hidden" id="journalEntryId">
+                            
+                            <div class="form-group">
+                                <label for="journalTitle">Title (Optional)</label>
+                                <input 
+                                    type="text" 
+                                    id="journalTitle" 
+                                    class="form-input"
+                                    placeholder="Give your entry a title..."
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="journalMood">How are you feeling?</label>
+                                <div class="mood-selector">
+                                    <button type="button" class="mood-btn" data-mood="happy" title="Happy">😊</button>
+                                    <button type="button" class="mood-btn" data-mood="calm" title="Calm">😌</button>
+                                    <button type="button" class="mood-btn" data-mood="anxious" title="Anxious">😰</button>
+                                    <button type="button" class="mood-btn" data-mood="sad" title="Sad">😢</button>
+                                    <button type="button" class="mood-btn" data-mood="angry" title="Angry">😠</button>
+                                    <button type="button" class="mood-btn" data-mood="neutral" title="Neutral">😐</button>
+                                </div>
+                                <input type="hidden" id="journalMood" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="journalContent">Your Thoughts</label>
+                                <textarea 
+                                    id="journalContent" 
+                                    class="form-textarea journal-textarea"
+                                    placeholder="Write your thoughts, feelings, or anything on your mind..."
+                                    rows="12"
+                                    required
+                                ></textarea>
+                                <p class="char-count"><span id="journalCharCount">0</span> characters</p>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" id="cancelJournalEntry">Cancel</button>
+                                <button type="submit" class="btn btn-primary">
+                                    <span id="saveJournalBtnText">Save Entry</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
         </main>
 
-        <!-- Toast Notifications -->
+        <!-- Toast Notification -->
         <div id="toastContainer" class="toast-container" aria-live="polite"></div>
 
         <!-- Loading Overlay -->
